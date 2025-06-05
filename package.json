@@ -20,11 +20,30 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@adminjs/express": "^6.1.1",
+    "@adminjs/nestjs": "^6.1.0",
+    "@adminjs/typeorm": "^5.0.1",
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/mapped-types": "^2.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
+    "@nestjs/typeorm": "^11.0.0",
+    "@scalar/nestjs-api-reference": "^0.5.1",
+    "adminjs": "^7.8.16",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "express": "^5.1.0",
+    "express-formidable": "^1.2.0",
+    "express-session": "^1.18.1",
+    "glob": "^11.0.2",
+    "nestjs-admin": "^0.4.1",
+    "pg": "^8.16.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.1",
+    "typeorm": "^0.3.24"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -37,7 +56,9 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
+    "@types/pg": "^8.15.2",
     "@types/supertest": "^6.0.2",
+    "@types/swagger-ui-express": "^4.1.8",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -69,5 +90,6 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
 }
