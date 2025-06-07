@@ -7,11 +7,14 @@ import appConfig from './config/appConfig';
 import { Idb } from './config/interfaces/db.type';
 import { DataSource } from 'typeorm';
 import { UserModule } from './user/user.module';
+import { RedisModule } from './redis/redis.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+import { IJwt } from './config/interfaces/jwt.type';
 @Module({
   imports: [
     UserModule,
     ConfigModule.forRoot({
-      isGlobal: true,
       load: [appConfig],
     }),
     TypeOrmModule.forRootAsync({
@@ -22,6 +25,19 @@ import { UserModule } from './user/user.module';
         return {
           ...dbConfig,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        };
+      },
+    }),
+    RedisModule,
+    AuthModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const jwtConfig = configService.get<IJwt>('secret');
+        return {
+          secret: jwtConfig?.secret,
+          signOptions: { expiresIn: '1h' },
         };
       },
     }),

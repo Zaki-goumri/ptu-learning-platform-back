@@ -5,6 +5,7 @@ import {
   MinLength,
   IsOptional,
   IsEnum,
+  IsPhoneNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -66,21 +67,24 @@ export class CreateUserDto {
   @Type(() => String)
   role: UserRole;
 
+  @ApiProperty({ example: '+213560620999' })
+  @IsString()
+  @IsPhoneNumber()
+  phoneNumber: string;
+
   @ApiPropertyOptional({ example: 'Computer Science' })
   @IsString()
   @IsOptional()
   department?: string;
 
-  @ApiPropertyOptional({ example: 'Year 1' })
-  @IsString()
-  @IsOptional()
-  yearGroup?: string;
-
-  @ApiPropertyOptional({
+  @ApiProperty({
     type: [String],
     example: ['Introduction to Computer Science'],
   })
   @IsString({ each: true })
-  @IsOptional()
-  courses?: string[];
+  courses: string[];
+
+  @ApiProperty({ example: 'Year 1' })
+  @IsString()
+  yearGroup: string;
 }
