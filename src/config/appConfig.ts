@@ -12,5 +12,11 @@ export default (): IConfig => {
       logging: process.env.NODE_ENV === 'development',
       logger: 'advanced-console',
     },
+    redis: {
+      url: process.env.REDIS_URL || '',
+    },
+    jwt: {
+      secret: process.env.JWT_SECRET || '',
+    },
   };
 };
