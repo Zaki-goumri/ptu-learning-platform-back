@@ -1,0 +1,54 @@
+import { useTranslation as originalUseTranslation } from 'react-i18next';
+import { createFunctions } from '../../utils/translate-functions.factory.js';
+
+/**
+ * Extends {@link TranslateFunctions}. Apart from that it also returns all the properties
+ * defined below.
+ *
+ * ```javascript
+ * import { useTranslation } from 'adminjs'
+ *
+ * const MyComponent = () => {
+ *   const { translateButton } = useTranslation()
+ *
+ *   return (
+ *     <Box>
+ *       <Button variant="contained" onClick={...}>{translateButton('save')}<Button>
+ *     </Box>
+ *   )
+ * }
+ * ```
+ *
+ * @memberof useTranslation
+ * @alias UseTranslationResponse
+ *
+ * @property {TranslateFunction} ... All functions defined in {@link TranslateFunctions}
+ */
+
+/**
+ * @classdesc
+ * Extends the useTranslation hook from react-i18next library.
+ *
+ * Returns all the {@link TranslateFunctions} + methods returned by the original
+ * useTranslation method from react-i18next like: `i18n` instance and `ready` flag.
+ *
+ * @class
+ * @subcategory Hooks
+ * @bundle
+ * @hideconstructor
+ * @returns {UseTranslationResponse}
+ */
+export const useTranslation = () => {
+  // eslint-disable-next-line no-shadow
+  const {
+    i18n,
+    ...rest
+  } = originalUseTranslation();
+  const translateFunctions = createFunctions(i18n);
+  return {
+    ...rest,
+    i18n,
+    ...translateFunctions
+  };
+};
+export default useTranslation;

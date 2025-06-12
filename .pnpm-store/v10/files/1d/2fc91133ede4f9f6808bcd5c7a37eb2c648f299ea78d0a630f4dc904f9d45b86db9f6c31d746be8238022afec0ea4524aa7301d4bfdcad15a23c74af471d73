@@ -1,0 +1,12 @@
+import { Editor } from '@tiptap/react';
+import { FC } from 'react';
+interface MenuButtonProps {
+    editor: Editor;
+    name: string;
+    onClick: () => void;
+    icon?: string;
+    attributes?: Record<string, any>;
+    children?: any;
+}
+declare const MenuButton: FC<MenuButtonProps>;
+export default MenuButton;

@@ -1,0 +1,15 @@
+import { FC } from 'react';
+interface EditorOptions {
+    [key: string]: any;
+}
+interface RichTextEditorOptions extends Partial<EditorOptions> {
+    limit?: number;
+}
+interface RichTextEditorProps {
+    value: any;
+    onChange: (value: string) => void;
+    options?: RichTextEditorOptions;
+}
+declare const RichTextEditor: FC<RichTextEditorProps>;
+export { RichTextEditor };
+export default RichTextEditor;

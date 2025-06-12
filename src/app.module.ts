@@ -11,6 +11,7 @@ import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { IJwt } from './config/interfaces/jwt.type';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 @Module({
   imports: [
     UserModule,
@@ -28,6 +29,14 @@ import { IJwt } from './config/interfaces/jwt.type';
         };
       },
     }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 5000,
+          limit: 3,
+        },
+      ],
+    }),
     RedisModule,
     AuthModule,
     JwtModule.registerAsync({
@@ -43,7 +52,13 @@ import { IJwt } from './config/interfaces/jwt.type';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: 'APP_GUARD',
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}

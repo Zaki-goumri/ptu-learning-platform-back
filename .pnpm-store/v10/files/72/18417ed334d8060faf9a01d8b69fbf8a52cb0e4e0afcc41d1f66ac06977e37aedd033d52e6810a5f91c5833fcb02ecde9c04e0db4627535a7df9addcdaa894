@@ -1,0 +1,10 @@
+import * as NestJSPlugin from './admin.module.js';
+export * from './admin-resource.module.js';
+export * from './admin.module.js';
+export * from './interfaces/admin-module-factory.interface.js';
+export * from './interfaces/admin-module-options.interface.js';
+export * from './interfaces/custom-loader.interface.js';
+export * from './loaders/abstract.loader.js';
+export * from './loaders/express.loader.js';
+export * from './loaders/noop.loader.js';
+export default NestJSPlugin;

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/schemas/3.1/compliance/server-object.test.ts"],
+  "sourcesContent": ["import { describe, expect, it } from 'vitest'\n\nimport { ServerObjectSchema } from '../unprocessed/server-object'\n\ndescribe('server-object', () => {\n  describe('ServerObjectSchema', () => {\n    // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#server-object-example\n    it('parses a single server', () => {\n      const result = ServerObjectSchema.parse({\n        url: 'https://development.gigantic-server.com/v1',\n        description: 'Development server',\n      })\n\n      expect(result).toEqual({\n        url: 'https://development.gigantic-server.com/v1',\n        description: 'Development server',\n      })\n    })\n  })\n})\n"],
+  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AAErC,SAAS,0BAA0B;AAEnC,SAAS,iBAAiB,MAAM;AAC9B,WAAS,sBAAsB,MAAM;AAEnC,OAAG,0BAA0B,MAAM;AACjC,YAAM,SAAS,mBAAmB,MAAM;AAAA,QACtC,KAAK;AAAA,QACL,aAAa;AAAA,MACf,CAAC;AAED,aAAO,MAAM,EAAE,QAAQ;AAAA,QACrB,KAAK;AAAA,QACL,aAAa;AAAA,MACf,CAAC;AAAA,IACH,CAAC;AAAA,EACH,CAAC;AACH,CAAC;",
+  "names": []
+}

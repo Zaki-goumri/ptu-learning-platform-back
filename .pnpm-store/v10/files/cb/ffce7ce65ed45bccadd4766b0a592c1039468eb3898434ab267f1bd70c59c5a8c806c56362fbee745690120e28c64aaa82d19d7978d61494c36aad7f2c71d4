@@ -1,0 +1,2 @@
+export const actionHasDisabledComponent = action => typeof action.component !== 'undefined' && action.component === false;
+export const actionHasCustomComponent = action => typeof action.component === 'string';

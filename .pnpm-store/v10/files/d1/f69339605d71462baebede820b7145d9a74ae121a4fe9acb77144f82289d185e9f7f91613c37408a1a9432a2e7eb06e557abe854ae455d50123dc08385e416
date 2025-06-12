@@ -1,0 +1,1 @@
+export const isRecordAction = (params, action) => 'recordId' in params && action.actionType === 'record';

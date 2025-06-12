@@ -37,7 +37,7 @@ export class UserService {
     return result;
   }
 
-  async findOne(id: number): Promise<User | NotFoundException> {
+  async findOne(id: number): Promise<User> {
     const cachedUser: string | null = await this.redisService.get(`user_${id}`);
     if (cachedUser) {
       const parsedUses = JSON.parse(cachedUser) as User;
@@ -50,17 +50,17 @@ export class UserService {
     return userFound;
   }
 
-  async findOneByEmail(email: string): Promise<User | NotFoundException> {
-    const cacheKey = `user_email_${email}`;
-    const cachedUser = await this.redisService.get(cacheKey);
-    if (cachedUser) return JSON.parse(cachedUser) as User;
+  async findOneByEmail(email: string): Promise<User> {
+    //const cacheKey = `user_email_${email}`;
+    //const cachedUser = await this.redisService.get(cacheKey);
+    //if (cachedUser) return JSON.parse(cachedUser) as User;
 
     const userFound = await this.userRepositry.findOne({ where: { email } });
     if (!userFound)
       throw new NotFoundException(
         `the user with email ${email} does not exist`,
       );
-    await this.redisService.set(cacheKey, JSON.stringify(userFound), 600);
+    //await this.redisService.set(cacheKey, JSON.stringify(userFound), 600);
     return userFound;
   }
 

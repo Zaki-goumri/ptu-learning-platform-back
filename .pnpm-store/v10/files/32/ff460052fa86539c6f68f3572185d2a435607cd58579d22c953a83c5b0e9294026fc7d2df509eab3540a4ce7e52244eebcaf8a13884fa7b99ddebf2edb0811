@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/schemas/extensions/x-scalar-redirect-uri.test.ts"],
+  "sourcesContent": ["import { describe, expect, it } from 'vitest'\nimport { XScalarRedirectUriSchema } from './x-scalar-redirect-uri'\n\ndescribe('XScalarRedirectUri', () => {\n  it('accepts a valid URI string', () => {\n    const result = XScalarRedirectUriSchema.parse({\n      'x-scalar-redirect-uri': 'https://example.com/callback',\n    })\n    expect(result).toEqual({\n      'x-scalar-redirect-uri': 'https://example.com/callback',\n    })\n  })\n\n  it('accepts an empty string', () => {\n    const result = XScalarRedirectUriSchema.parse({\n      'x-scalar-redirect-uri': '',\n    })\n    expect(result).toEqual({ 'x-scalar-redirect-uri': '' })\n  })\n\n  it('defaults to undefined when empty object provided', () => {\n    const result = XScalarRedirectUriSchema.parse({})\n    expect(result).toEqual({ 'x-scalar-redirect-uri': undefined })\n  })\n})\n"],
+  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AACrC,SAAS,gCAAgC;AAEzC,SAAS,sBAAsB,MAAM;AACnC,KAAG,8BAA8B,MAAM;AACrC,UAAM,SAAS,yBAAyB,MAAM;AAAA,MAC5C,yBAAyB;AAAA,IAC3B,CAAC;AACD,WAAO,MAAM,EAAE,QAAQ;AAAA,MACrB,yBAAyB;AAAA,IAC3B,CAAC;AAAA,EACH,CAAC;AAED,KAAG,2BAA2B,MAAM;AAClC,UAAM,SAAS,yBAAyB,MAAM;AAAA,MAC5C,yBAAyB;AAAA,IAC3B,CAAC;AACD,WAAO,MAAM,EAAE,QAAQ,EAAE,yBAAyB,GAAG,CAAC;AAAA,EACxD,CAAC;AAED,KAAG,oDAAoD,MAAM;AAC3D,UAAM,SAAS,yBAAyB,MAAM,CAAC,CAAC;AAChD,WAAO,MAAM,EAAE,QAAQ,EAAE,yBAAyB,OAAU,CAAC;AAAA,EAC/D,CAAC;AACH,CAAC;",
+  "names": []
+}

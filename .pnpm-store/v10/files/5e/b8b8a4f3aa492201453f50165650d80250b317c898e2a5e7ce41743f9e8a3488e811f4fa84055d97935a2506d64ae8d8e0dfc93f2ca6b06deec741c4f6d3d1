@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../../src/schemas/3.1/unprocessed/openapi-object.ts"],
+  "sourcesContent": ["import { OpenApiObjectSchema as OriginalOpenApiObjectSchema } from '../processed/openapi-object'\n\n/**\n * OpenAPI Object\n *\n * This is the root object of the OpenAPI Description.\n *\n * @see https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#openapi-object\n */\nexport const OpenApiObjectSchema = OriginalOpenApiObjectSchema\n"],
+  "mappings": "AAAA,SAAS,uBAAuB,mCAAmC;AAS5D,MAAM,sBAAsB;",
+  "names": []
+}

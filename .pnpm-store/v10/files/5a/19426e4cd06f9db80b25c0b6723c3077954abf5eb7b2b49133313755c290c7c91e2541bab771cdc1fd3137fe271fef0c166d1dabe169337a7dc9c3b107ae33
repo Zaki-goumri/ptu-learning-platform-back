@@ -1,0 +1,1 @@
+export const isResourceAction = (params, action) => 'recordIds' in params && action.actionType === 'resource';

@@ -1,0 +1,25 @@
+.admin-form {
+  width: 100%;
+  background: #f5f5f5;
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  padding-bottom: 3.5rem;
+}
+
+.array-value {
+  margin-bottom: 0.25rem;
+}
+
+.array-value__input {
+  max-width: calc(100% - 2.5rem);
+  display: inline;
+}
+
+.array-remove {
+  border: none;
+  background: none;
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/*# sourceMappingURL=form.css.map */

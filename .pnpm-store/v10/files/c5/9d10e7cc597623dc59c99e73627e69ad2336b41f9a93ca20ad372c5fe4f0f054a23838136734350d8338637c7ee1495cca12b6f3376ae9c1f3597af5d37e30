@@ -1,0 +1,12 @@
+{
+    "name": "@types/cache-manager",
+    "version": "5.0.0",
+    "description": "Stub TypeScript definitions entry for cache-manager, which provides its own types definitions",
+    "main": "",
+    "scripts": {},
+    "license": "MIT",
+    "dependencies": {
+        "cache-manager": "*"
+    },
+    "deprecated": "This is a stub types definition. cache-manager provides its own type definitions, so you do not need this installed."
+}

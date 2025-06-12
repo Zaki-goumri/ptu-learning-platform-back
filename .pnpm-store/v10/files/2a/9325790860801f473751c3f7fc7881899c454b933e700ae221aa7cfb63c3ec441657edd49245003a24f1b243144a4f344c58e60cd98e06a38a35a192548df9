@@ -1,0 +1,37 @@
+import { css } from "./styled";
+/**
+ * Resets css styles which can be applied to element created by styled-component
+ *
+ * ### Example
+ *
+ * ```javascript
+ * import { reset } from '@adminjs/design-system'
+ *
+ * const myContentComponent = styled`
+ *   ${reset};
+ * `
+ * ```
+ * @new in version 3.3
+ * @memberof module:@adminjs/design-system
+ */
+declare const reset: ReturnType<typeof css>;
+/**
+ * Resets css component which should be applied to the top of the html
+ *
+ * ### Example
+ *
+ * ```jsx
+ * import { Reset } from '@adminjs/design-system'
+ *
+ * <ThemeProvider theme={theme}>
+ *   <Reset />
+ *   <Box>
+ *     { ... }
+ *   </Box>
+ * </ThemeProvider>
+ * ```
+ * @new in version 3.3
+ * @memberof module:@adminjs/design-system
+ */
+declare const Reset: import("styled-components").GlobalStyleComponent<object, import("styled-components").DefaultTheme>;
+export { Reset, reset, };
