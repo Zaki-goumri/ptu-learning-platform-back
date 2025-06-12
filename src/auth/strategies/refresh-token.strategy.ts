@@ -11,7 +11,7 @@ import { User } from 'src/user/entities/user.entity';
 import { IRefreshTokenPayload } from '../types/token-payload.type';
 
 @Injectable()
-export class AcessTokenStrategy extends PassportStrategy(
+export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
   'refresh-token',
 ) {

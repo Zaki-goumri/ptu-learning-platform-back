@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/schemas/extensions/x-internal.test.ts"],
+  "sourcesContent": ["import { describe, expect, it } from 'vitest'\nimport { XInternalSchema } from './x-internal'\n\ndescribe('XInternalSchema', () => {\n  it('allows true', () => {\n    const result = XInternalSchema.parse({\n      'x-internal': true,\n    })\n\n    expect(result).toEqual({ 'x-internal': true })\n  })\n\n  it('allows false', () => {\n    const result = XInternalSchema.parse({\n      'x-internal': false,\n    })\n\n    expect(result).toEqual({ 'x-internal': false })\n  })\n\n  it('defaults to undefined when empty', () => {\n    expect(XInternalSchema.parse({})).toEqual({ 'x-internal': undefined })\n  })\n})\n"],
+  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AACrC,SAAS,uBAAuB;AAEhC,SAAS,mBAAmB,MAAM;AAChC,KAAG,eAAe,MAAM;AACtB,UAAM,SAAS,gBAAgB,MAAM;AAAA,MACnC,cAAc;AAAA,IAChB,CAAC;AAED,WAAO,MAAM,EAAE,QAAQ,EAAE,cAAc,KAAK,CAAC;AAAA,EAC/C,CAAC;AAED,KAAG,gBAAgB,MAAM;AACvB,UAAM,SAAS,gBAAgB,MAAM;AAAA,MACnC,cAAc;AAAA,IAChB,CAAC;AAED,WAAO,MAAM,EAAE,QAAQ,EAAE,cAAc,MAAM,CAAC;AAAA,EAChD,CAAC;AAED,KAAG,oCAAoC,MAAM;AAC3C,WAAO,gBAAgB,MAAM,CAAC,CAAC,CAAC,EAAE,QAAQ,EAAE,cAAc,OAAU,CAAC;AAAA,EACvE,CAAC;AACH,CAAC;",
+  "names": []
+}

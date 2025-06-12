@@ -1,0 +1,90 @@
+import React from 'react';
+import { Trans } from 'react-i18next';
+import { MessageBox, Link } from '@adminjs/design-system';
+import ErrorBoundary from './error-boundary.js';
+import { actions } from '../actions/index.js';
+import { DOCS } from '../../../constants.js';
+import { useTranslation } from '../../hooks/index.js';
+/**
+ * Component which renders all the default and custom actions for both the Resource and the Record.
+ *
+ * It passes all props down to the actual Action component.
+ *
+ * Example of creating your own actions:
+ * ```
+ * // AdminJS options
+ * const AdminJSOptions = {
+ *   resources: [
+ *      resource,
+ *      options: {
+ *        actions: {
+ *           myNewAction: {
+ *             label: 'amazing action',
+ *             icon: 'Add',
+ *             inVisible: (resource, record) => record.param('email') !== '',
+ *             actionType: 'record',
+ *             component: 'MyNewAction',
+ *             handler: (request, response, data) => {
+ *               return {
+ *                  ...
+ *               }
+ *             }
+ *           }
+ *        }
+ *      }
+ *   ]
+ * }
+ * ```
+ *
+ * ```
+ * // ./my-new-action.js
+ * import { Box } from 'adminjs'
+ *
+ * const MyNewAction = (props) => {
+ *   const { resource, action, record } = props
+ *   // do something with the props and render action
+ *   return (
+ *     <Box>Some Action Content</Box>
+ *   )
+ * }
+ * ```
+ *
+ * @component
+ * @name BaseActionComponent
+ * @subcategory Application
+ */
+export const BaseActionComponent = props => {
+  const {
+    resource,
+    action,
+    record,
+    records,
+    setTag
+  } = props;
+  const documentationLink = [DOCS, 'BaseAction.html'].join('/');
+  const {
+    translateMessage
+  } = useTranslation();
+  let Action = actions[action.name];
+  if (action.component) {
+    Action = AdminJS.UserComponents[action.component];
+  }
+  if (Action) {
+    return /*#__PURE__*/React.createElement(ErrorBoundary, null, /*#__PURE__*/React.createElement(Action, {
+      action: action,
+      resource: resource,
+      record: record,
+      records: records,
+      setTag: setTag
+    }));
+  }
+  return Action || /*#__PURE__*/React.createElement(MessageBox, {
+    variant: "danger"
+  }, translateMessage('noActionComponent'), /*#__PURE__*/React.createElement(Trans, {
+    key: "messages.buttons.seeTheDocumentation"
+  }, "See:", /*#__PURE__*/React.createElement(Link, {
+    ml: "default",
+    href: documentationLink
+  }, "the documentation")));
+};
+export default BaseActionComponent;

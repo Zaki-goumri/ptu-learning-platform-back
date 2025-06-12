@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "target": "esnext",
+    "esModuleInterop": true,
+    "jsx": "react",
+    "declaration": true,
+    "declarationDir": "./types",
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "noImplicitThis": true,
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": false,
+    "baseUrl": "./",
+    "incremental": true
+  },
+  "include": [
+    "./src/**/*",
+    "./spec/**/*"
+  ],
+}

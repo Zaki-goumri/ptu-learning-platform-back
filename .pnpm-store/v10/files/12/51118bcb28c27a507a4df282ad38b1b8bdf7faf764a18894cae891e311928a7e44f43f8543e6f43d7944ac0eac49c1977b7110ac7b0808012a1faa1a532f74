@@ -1,0 +1,63 @@
+{
+  "name": "@scalar/nestjs-api-reference",
+  "description": "A middleware for using the Scalar API reference with NestJS",
+  "license": "MIT",
+  "author": "Scalar (https://github.com/scalar)",
+  "homepage": "https://github.com/scalar/scalar",
+  "bugs": "https://github.com/scalar/scalar/issues/new/choose",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scalar/scalar.git",
+    "directory": "integrations/nestjs"
+  },
+  "version": "0.5.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "type": "module",
+  "main": "dist/index.cjs",
+  "types": "dist/index.d.cts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "module": "dist/index.js",
+  "dependencies": {
+    "@scalar/types": "0.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "express": "^5.1.0",
+    "fastify": "^4.26.2",
+    "tsup": "^8.3.5",
+    "vite": "5.4.19",
+    "vitest": "^1.6.0",
+    "@scalar/api-reference": "1.29.1"
+  },
+  "scripts": {
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "build:express": "cd playground/nestjs-api-reference-express && pnpm build",
+    "build:fastify": "cd playground/nestjs-api-reference-fastify && pnpm build",
+    "dev:express": "cd playground/nestjs-api-reference-express && pnpm dev",
+    "dev:fastify": "cd playground/nestjs-api-reference-fastify && pnpm dev",
+    "docker:build-express": "docker build --build-arg BASE_IMAGE=scalar-base -t nestjs-api-reference-express -f playground/nestjs-api-reference-express/Dockerfile .",
+    "docker:build-fastify": "docker build --build-arg BASE_IMAGE=scalar-base -t nestjs-api-reference-fastify -f playground/nestjs-api-reference-fastify/Dockerfile .",
+    "docker:run-express": "docker run -p 5056:5056 nestjs-api-reference-express",
+    "docker:run-fastify": "docker run -p 5057:5057 nestjs-api-reference-fastify",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint .  --fix",
+    "test": "vitest run",
+    "types:check": "tsc --noEmit"
+  }
+}

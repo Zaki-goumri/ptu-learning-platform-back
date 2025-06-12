@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../../src/schemas/extensions/x-scalar-sdk-installation.test.ts"],
+  "sourcesContent": ["import { describe, expect, it } from 'vitest'\nimport { XScalarSdkInstallationSchema } from './x-scalar-sdk-installation'\n\ndescribe('XScalarSdkInstallationSchema', () => {\n  it('supports an array of installation instructions', () => {\n    const result = XScalarSdkInstallationSchema.parse({\n      'x-scalar-sdk-installation': [\n        {\n          lang: 'Node',\n          description: 'Install our custom SDK for Node.js from npm',\n          source: 'npm install @your-awesome-company/sdk',\n        },\n      ],\n    })\n\n    expect(result).toEqual({\n      'x-scalar-sdk-installation': [\n        {\n          lang: 'Node',\n          description: 'Install our custom SDK for Node.js from npm',\n          source: 'npm install @your-awesome-company/sdk',\n        },\n      ],\n    })\n  })\n})\n"],
+  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AACrC,SAAS,oCAAoC;AAE7C,SAAS,gCAAgC,MAAM;AAC7C,KAAG,kDAAkD,MAAM;AACzD,UAAM,SAAS,6BAA6B,MAAM;AAAA,MAChD,6BAA6B;AAAA,QAC3B;AAAA,UACE,MAAM;AAAA,UACN,aAAa;AAAA,UACb,QAAQ;AAAA,QACV;AAAA,MACF;AAAA,IACF,CAAC;AAED,WAAO,MAAM,EAAE,QAAQ;AAAA,MACrB,6BAA6B;AAAA,QAC3B;AAAA,UACE,MAAM;AAAA,UACN,aAAa;AAAA,UACb,QAAQ;AAAA,QACV;AAAA,MACF;AAAA,IACF,CAAC;AAAA,EACH,CAAC;AACH,CAAC;",
+  "names": []
+}

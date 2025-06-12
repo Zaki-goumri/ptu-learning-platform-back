@@ -21,10 +21,26 @@ import {
   ApiQuery,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
-
+/*
+ * user crud endpoints
+ */
 @Controller('user')
+// common responses
+@ApiTooManyRequestsResponse({
+  description: 'rate limiting to many messges',
+  example: 'ThrottlerException: Too Many Requests',
+})
+@ApiNotFoundResponse({
+  description: 'user with id ${id} not found',
+  example: 'user with id ${id} not found',
+})
+@ApiInternalServerErrorResponse({
+  description: 'internal server error',
+  example: 'internal server error',
+})
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -34,14 +50,6 @@ export class UserController {
     description: 'create a new user and save in db ',
   })
   @ApiCreatedResponse({ description: 'create a new user', type: User })
-  @ApiNotFoundResponse({
-    description: 'user with id ${id} not found',
-    example: 'user with id ${id} not found',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'internal server error',
-    example: 'internal server error',
-  })
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
@@ -57,14 +65,6 @@ export class UserController {
   })
   @ApiQuery({ name: 'page', description: 'pagination config' })
   @ApiQuery({ name: 'limit', description: 'pagination config' })
-  @ApiNotFoundResponse({
-    description: 'user with id ${id} not found',
-    example: 'user with id ${id} not found',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'internal server error',
-    example: 'internal server error',
-  })
   @Get()
   findByPagination(@Query('page') page: number, @Query('limit') limit: number) {
     return this.userService.findByPagination(page, limit);
@@ -80,14 +80,6 @@ export class UserController {
     type: User,
   })
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
-  @ApiNotFoundResponse({
-    description: 'user with id ${id} not found',
-    example: 'user with id ${id} not found',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'internal server error',
-    example: 'internal server error',
-  })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
@@ -103,14 +95,6 @@ export class UserController {
     type: User,
   })
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
-  @ApiNotFoundResponse({
-    description: 'user with id ${id} not found',
-    example: 'user with id ${id} not found',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'internal server error',
-    example: 'internal server error',
-  })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
@@ -128,14 +112,6 @@ export class UserController {
     type: String,
   })
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
-  @ApiNotFoundResponse({
-    description: 'user with id ${id} not found',
-    example: 'user with id ${id} not found',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'internal server error',
-    example: 'internal server error',
-  })
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.userService.delete(+id);
