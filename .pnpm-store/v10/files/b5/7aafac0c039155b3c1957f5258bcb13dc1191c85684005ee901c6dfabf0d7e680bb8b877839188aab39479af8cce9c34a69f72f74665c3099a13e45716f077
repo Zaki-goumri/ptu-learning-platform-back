@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/snippetz/index.ts"],
-  "sourcesContent": ["export * from './snippetz'\n"],
-  "mappings": "AAAA,cAAc;",
-  "names": []
-}

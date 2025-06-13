@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../../src/schemas/3.1/unprocessed/paths-object.ts"],
-  "sourcesContent": ["import { PathsObjectSchema as OriginalPathsObjectSchema } from '../processed/paths-object'\n\n/**\n * Paths Object\n *\n * Holds the relative paths to the individual endpoints and their operations. The path is appended to the URL from the\n * Server Object in order to construct the full URL. The Paths Object MAY be empty, due to Access Control List (ACL)\n * constraints.\n *\n * @see https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#paths-object\n */\nexport const PathsObjectSchema = OriginalPathsObjectSchema\n"],
-  "mappings": "AAAA,SAAS,qBAAqB,iCAAiC;AAWxD,MAAM,oBAAoB;",
-  "names": []
-}

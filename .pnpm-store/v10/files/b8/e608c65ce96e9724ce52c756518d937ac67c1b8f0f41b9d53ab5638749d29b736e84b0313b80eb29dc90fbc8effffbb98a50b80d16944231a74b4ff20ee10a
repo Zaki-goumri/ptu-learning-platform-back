@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/schemas/extensions/x-scalar-ignore.test.ts"],
-  "sourcesContent": ["import { describe, expect, it } from 'vitest'\nimport { XScalarIgnoreSchema } from './x-scalar-ignore'\n\ndescribe('XScalarIgnoreSchema', () => {\n  it('allows true', () => {\n    const result = XScalarIgnoreSchema.parse({\n      'x-scalar-ignore': true,\n    })\n\n    expect(result).toEqual({ 'x-scalar-ignore': true })\n  })\n\n  it('allows false', () => {\n    const result = XScalarIgnoreSchema.parse({\n      'x-scalar-ignore': false,\n    })\n\n    expect(result).toEqual({ 'x-scalar-ignore': false })\n  })\n\n  it('defaults to undefined when empty', () => {\n    expect(XScalarIgnoreSchema.parse({})).toEqual({ 'x-scalar-ignore': undefined })\n  })\n})\n"],
-  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AACrC,SAAS,2BAA2B;AAEpC,SAAS,uBAAuB,MAAM;AACpC,KAAG,eAAe,MAAM;AACtB,UAAM,SAAS,oBAAoB,MAAM;AAAA,MACvC,mBAAmB;AAAA,IACrB,CAAC;AAED,WAAO,MAAM,EAAE,QAAQ,EAAE,mBAAmB,KAAK,CAAC;AAAA,EACpD,CAAC;AAED,KAAG,gBAAgB,MAAM;AACvB,UAAM,SAAS,oBAAoB,MAAM;AAAA,MACvC,mBAAmB;AAAA,IACrB,CAAC;AAED,WAAO,MAAM,EAAE,QAAQ,EAAE,mBAAmB,MAAM,CAAC;AAAA,EACrD,CAAC;AAED,KAAG,oCAAoC,MAAM;AAC3C,WAAO,oBAAoB,MAAM,CAAC,CAAC,CAAC,EAAE,QAAQ,EAAE,mBAAmB,OAAU,CAAC;AAAA,EAChF,CAAC;AACH,CAAC;",
-  "names": []
-}

@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/schemas/extensions/x-post-response.test.ts"],
-  "sourcesContent": ["import { describe, expect, it } from 'vitest'\nimport { XPostResponseSchema } from './x-post-response'\n\ndescribe('x-post-response', () => {\n  it('validates a valid post response script', () => {\n    const result = XPostResponseSchema.parse({\n      'x-post-response': 'pm.test(\"Status code is 200\", () => { pm.response.to.have.status(200) })',\n    })\n\n    expect(result).toEqual({\n      'x-post-response': 'pm.test(\"Status code is 200\", () => { pm.response.to.have.status(200) })',\n    })\n  })\n\n  it('allows empty object', () => {\n    const result = XPostResponseSchema.parse({})\n    expect(result).toEqual({ 'x-post-response': undefined })\n  })\n\n  it('rejects non-string values', () => {\n    expect(() =>\n      XPostResponseSchema.parse({\n        'x-post-response': 123,\n      }),\n    ).toThrow()\n  })\n})\n"],
-  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AACrC,SAAS,2BAA2B;AAEpC,SAAS,mBAAmB,MAAM;AAChC,KAAG,0CAA0C,MAAM;AACjD,UAAM,SAAS,oBAAoB,MAAM;AAAA,MACvC,mBAAmB;AAAA,IACrB,CAAC;AAED,WAAO,MAAM,EAAE,QAAQ;AAAA,MACrB,mBAAmB;AAAA,IACrB,CAAC;AAAA,EACH,CAAC;AAED,KAAG,uBAAuB,MAAM;AAC9B,UAAM,SAAS,oBAAoB,MAAM,CAAC,CAAC;AAC3C,WAAO,MAAM,EAAE,QAAQ,EAAE,mBAAmB,OAAU,CAAC;AAAA,EACzD,CAAC;AAED,KAAG,6BAA6B,MAAM;AACpC;AAAA,MAAO,MACL,oBAAoB,MAAM;AAAA,QACxB,mBAAmB;AAAA,MACrB,CAAC;AAAA,IACH,EAAE,QAAQ;AAAA,EACZ,CAAC;AACH,CAAC;",
-  "names": []
-}

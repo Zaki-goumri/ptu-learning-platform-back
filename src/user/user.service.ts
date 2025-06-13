@@ -4,12 +4,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RedisService } from 'src/redis/redis.service';
+import { generateHash } from 'src/common/utils/hash.utils';
+import { SignupDto } from 'src/auth/dto/requests/sign-up.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -17,8 +18,13 @@ export class UserService {
     private userRepositry: Repository<User>,
     private redisService: RedisService,
   ) {}
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const newUser = await this.userRepositry.save({ ...createUserDto });
+  async create(createUserDto: SignupDto): Promise<User> {
+    const hashedPassword = await generateHash(createUserDto.password);
+
+    const newUser = await this.userRepositry.save({
+      ...createUserDto,
+      password: hashedPassword,
+    });
     if (!newUser)
       throw new ConflictException('there is an error in saving the user');
     await this.redisService.set(`user_${newUser.id}`, JSON.stringify(newUser));

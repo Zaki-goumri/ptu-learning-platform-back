@@ -1,1 +1,0 @@
-export const isBulkAction = (params, action) => 'recordIds' in params && action.actionType === 'bulk';

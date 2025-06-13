@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -11,12 +10,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
   ApiOperation,
   ApiParam,
-  ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiQuery,
   ApiInternalServerErrorResponse,
@@ -44,16 +41,6 @@ import { User } from './entities/user.entity';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({
-    summary: 'create user',
-    description: 'create a new user and save in db ',
-  })
-  @ApiCreatedResponse({ description: 'create a new user', type: User })
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'find users with pagination',

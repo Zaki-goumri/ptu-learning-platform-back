@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/api-reference/index.ts"],
-  "sourcesContent": ["export {\n  type ApiClientConfiguration,\n  type ApiReferenceConfiguration,\n  type ApiReferenceConfigurationWithSources,\n  type AnyApiReferenceConfiguration,\n  type SpecConfiguration,\n  apiClientConfigurationSchema,\n  apiReferenceConfigurationSchema,\n  specConfigurationSchema,\n  isConfigurationWithSources,\n} from './api-reference-configuration'\n\nexport {\n  type HtmlRenderingConfiguration,\n  htmlRenderingConfigurationSchema,\n} from './html-rendering-configuration'\n\nexport type {\n  SpecificationExtension,\n  ApiReferencePlugin,\n} from './api-reference-plugin'\n\nexport type { ApiReferenceInstance, CreateApiReference } from './html-api'\n"],
-  "mappings": "AAAA;AAAA,EAME;AAAA,EACA;AAAA,EACA;AAAA,EACA;AAAA,OACK;AAEP;AAAA,EAEE;AAAA,OACK;",
-  "names": []
-}

@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../../src/schemas/3.1/compliance/tag-object.test.ts"],
-  "sourcesContent": ["import { describe, expect, it } from 'vitest'\n\nimport { TagObjectSchema } from '../unprocessed/tag-object'\n\ndescribe('tag-object', () => {\n  describe('TagObjectSchema', () => {\n    // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#tag-object-example\n    it('Tag Object Example', () => {\n      const result = TagObjectSchema.parse({\n        name: 'pet',\n        description: 'Pets operations',\n      })\n\n      expect(result).toEqual({\n        name: 'pet',\n        description: 'Pets operations',\n      })\n    })\n  })\n})\n"],
-  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AAErC,SAAS,uBAAuB;AAEhC,SAAS,cAAc,MAAM;AAC3B,WAAS,mBAAmB,MAAM;AAEhC,OAAG,sBAAsB,MAAM;AAC7B,YAAM,SAAS,gBAAgB,MAAM;AAAA,QACnC,MAAM;AAAA,QACN,aAAa;AAAA,MACf,CAAC;AAED,aAAO,MAAM,EAAE,QAAQ;AAAA,QACrB,MAAM;AAAA,QACN,aAAa;AAAA,MACf,CAAC;AAAA,IACH,CAAC;AAAA,EACH,CAAC;AACH,CAAC;",
-  "names": []
-}
