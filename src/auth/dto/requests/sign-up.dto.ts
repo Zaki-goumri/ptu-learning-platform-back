@@ -70,7 +70,7 @@ export class SignupDto {
 
   @ApiProperty({ example: '+213560620999' })
   @IsString()
-  @IsPhoneNumber()
+  @IsPhoneNumber('DZ', { message: 'Invalid Algerian phone number format' })
   phoneNumber: string;
 
   @ApiPropertyOptional({ example: 'Computer Science' })

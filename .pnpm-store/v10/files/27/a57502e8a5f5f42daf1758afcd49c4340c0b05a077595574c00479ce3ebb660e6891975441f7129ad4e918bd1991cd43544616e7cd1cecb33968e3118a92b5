@@ -1,0 +1,12 @@
+{
+    "name": "@types/csv-parse",
+    "version": "1.2.5",
+    "description": "Stub TypeScript definitions entry for csv-parse, which provides its own types definitions",
+    "main": "",
+    "scripts": {},
+    "license": "MIT",
+    "dependencies": {
+        "csv-parse": "*"
+    },
+    "deprecated": "This is a stub types definition. csv-parse provides its own type definitions, so you do not need this installed."
+}
