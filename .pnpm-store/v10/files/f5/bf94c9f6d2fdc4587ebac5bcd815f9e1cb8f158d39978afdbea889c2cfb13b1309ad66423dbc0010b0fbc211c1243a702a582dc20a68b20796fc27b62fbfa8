@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../src/schemas/extensions/x-scalar-icon.test.ts"],
-  "sourcesContent": ["import { describe, expect, it } from 'vitest'\nimport { XScalarIconSchema } from './x-scalar-icon'\n\ndescribe('XScalarIconSchema', () => {\n  it('allows any string value', () => {\n    const result = XScalarIconSchema.parse({\n      'x-scalar-icon': 'foobar',\n    })\n\n    expect(result).toEqual({ 'x-scalar-icon': 'foobar' })\n  })\n\n  it('has no default value', () => {\n    expect(XScalarIconSchema.parse({})).toEqual({ 'x-scalar-icon': undefined })\n  })\n})\n"],
-  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AACrC,SAAS,yBAAyB;AAElC,SAAS,qBAAqB,MAAM;AAClC,KAAG,2BAA2B,MAAM;AAClC,UAAM,SAAS,kBAAkB,MAAM;AAAA,MACrC,iBAAiB;AAAA,IACnB,CAAC;AAED,WAAO,MAAM,EAAE,QAAQ,EAAE,iBAAiB,SAAS,CAAC;AAAA,EACtD,CAAC;AAED,KAAG,wBAAwB,MAAM;AAC/B,WAAO,kBAAkB,MAAM,CAAC,CAAC,CAAC,EAAE,QAAQ,EAAE,iBAAiB,OAAU,CAAC;AAAA,EAC5E,CAAC;AACH,CAAC;",
-  "names": []
-}

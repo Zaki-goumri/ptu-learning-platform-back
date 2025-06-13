@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../../src/schemas/3.1/compliance/contact-object.test.ts"],
-  "sourcesContent": ["import { describe, expect, it } from 'vitest'\n\nimport { ContactObjectSchema } from '../unprocessed/contact-object'\n\ndescribe('contact-object', () => {\n  describe('ContactObjectSchema', () => {\n    // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#contact-object-example\n    it('Contact Object Example', () => {\n      const result = ContactObjectSchema.parse({\n        name: 'API Support',\n        url: 'https://www.example.com/support',\n        email: 'support@example.com',\n      })\n\n      expect(result).toEqual({\n        name: 'API Support',\n        url: 'https://www.example.com/support',\n        email: 'support@example.com',\n      })\n    })\n  })\n})\n"],
-  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AAErC,SAAS,2BAA2B;AAEpC,SAAS,kBAAkB,MAAM;AAC/B,WAAS,uBAAuB,MAAM;AAEpC,OAAG,0BAA0B,MAAM;AACjC,YAAM,SAAS,oBAAoB,MAAM;AAAA,QACvC,MAAM;AAAA,QACN,KAAK;AAAA,QACL,OAAO;AAAA,MACT,CAAC;AAED,aAAO,MAAM,EAAE,QAAQ;AAAA,QACrB,MAAM;AAAA,QACN,KAAK;AAAA,QACL,OAAO;AAAA,MACT,CAAC;AAAA,IACH,CAAC;AAAA,EACH,CAAC;AACH,CAAC;",
-  "names": []
-}

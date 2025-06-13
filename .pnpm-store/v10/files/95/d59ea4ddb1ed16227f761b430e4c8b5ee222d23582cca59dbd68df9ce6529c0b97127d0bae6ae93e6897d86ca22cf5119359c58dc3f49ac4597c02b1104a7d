@@ -1,6 +1,0 @@
-export { default as DashboardRoute } from './dashboard.js'
-export { default as RecordActionRoute } from './record-action.js'
-export { default as ResourceActionRoute } from './resource-action.js'
-export { default as BulkActionRoute } from './bulk-action.js'
-export { default as PageRoute } from './page.js'
-export { default as ResourceRoute } from './resource.js'

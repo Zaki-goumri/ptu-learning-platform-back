@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../../src/schemas/3.1/compliance/external-documentation-object.test.ts"],
-  "sourcesContent": ["import { describe, expect, it } from 'vitest'\nimport { ExternalDocumentationObjectSchema } from '../unprocessed/external-documentation-object'\n\ndescribe('external-documentation', () => {\n  describe('ExternalDocumentationObjectSchema', () => {\n    // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#external-documentation-object-example\n    it('External Documentation Object Example', () => {\n      const result = ExternalDocumentationObjectSchema.parse({\n        description: 'Find more info here',\n        url: 'https://example.com',\n      })\n\n      expect(result).toEqual({\n        description: 'Find more info here',\n        url: 'https://example.com',\n      })\n    })\n  })\n})\n"],
-  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AACrC,SAAS,yCAAyC;AAElD,SAAS,0BAA0B,MAAM;AACvC,WAAS,qCAAqC,MAAM;AAElD,OAAG,yCAAyC,MAAM;AAChD,YAAM,SAAS,kCAAkC,MAAM;AAAA,QACrD,aAAa;AAAA,QACb,KAAK;AAAA,MACP,CAAC;AAED,aAAO,MAAM,EAAE,QAAQ;AAAA,QACrB,aAAa;AAAA,QACb,KAAK;AAAA,MACP,CAAC;AAAA,IACH,CAAC;AAAA,EACH,CAAC;AACH,CAAC;",
-  "names": []
-}

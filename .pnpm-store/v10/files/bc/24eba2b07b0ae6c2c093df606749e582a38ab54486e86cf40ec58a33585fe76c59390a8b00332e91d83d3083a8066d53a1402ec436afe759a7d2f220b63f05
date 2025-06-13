@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../../../src/schemas/3.1/compliance/license-object.test.ts"],
-  "sourcesContent": ["import { describe, expect, it } from 'vitest'\n\nimport { LicenseObjectSchema } from '../unprocessed/license-object'\n\ndescribe('license-object', () => {\n  describe('LicenseObjectSchema', () => {\n    // https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.1.md#license-object-example\n    it('License Object Example', () => {\n      const result = LicenseObjectSchema.parse({\n        name: 'Apache 2.0',\n        identifier: 'Apache-2.0',\n      })\n\n      expect(result).toEqual({\n        name: 'Apache 2.0',\n        identifier: 'Apache-2.0',\n      })\n    })\n  })\n})\n"],
-  "mappings": "AAAA,SAAS,UAAU,QAAQ,UAAU;AAErC,SAAS,2BAA2B;AAEpC,SAAS,kBAAkB,MAAM;AAC/B,WAAS,uBAAuB,MAAM;AAEpC,OAAG,0BAA0B,MAAM;AACjC,YAAM,SAAS,oBAAoB,MAAM;AAAA,QACvC,MAAM;AAAA,QACN,YAAY;AAAA,MACd,CAAC;AAED,aAAO,MAAM,EAAE,QAAQ;AAAA,QACrB,MAAM;AAAA,QACN,YAAY;AAAA,MACd,CAAC;AAAA,IACH,CAAC;AAAA,EACH,CAAC;AACH,CAAC;",
-  "names": []
-}

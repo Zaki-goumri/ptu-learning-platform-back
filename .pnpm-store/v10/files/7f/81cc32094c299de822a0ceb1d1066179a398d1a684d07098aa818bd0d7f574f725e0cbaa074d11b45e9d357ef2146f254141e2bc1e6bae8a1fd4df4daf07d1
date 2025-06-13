@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../src/api-client/index.ts"],
-  "sourcesContent": ["export { type ApiClientPlugin, ApiClientPluginSchema } from './api-client-plugin'\n"],
-  "mappings": "AAAA,SAA+B,6BAA6B;",
-  "names": []
-}

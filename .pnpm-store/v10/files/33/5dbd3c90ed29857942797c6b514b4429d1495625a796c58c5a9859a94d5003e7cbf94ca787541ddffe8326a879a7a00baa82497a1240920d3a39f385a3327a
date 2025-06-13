@@ -1,2 +1,0 @@
-const DELIMITER = '.';
-export { DELIMITER };
