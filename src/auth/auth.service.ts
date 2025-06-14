@@ -16,7 +16,7 @@ import { omit } from 'lodash';
 import { compareHash, generateHash } from 'src/common/utils/hash.utils';
 import { SignupDto } from './dto/requests/sign-up.dto';
 import { AuthDto } from './dto/response/auth-response';
-import * as csv from 'csv-parser';
+import csv from 'csv-parser';
 import { Readable } from 'stream';
 
 @Injectable()
@@ -108,22 +108,29 @@ export class AuthService {
       }
     }
   }
-  async signupMany(
+  async bulkSignup(
     file: Express.Multer.File,
-    tempPassword: boolean,
-    welcomeEmail: boolean,
+    options: {
+      skipDuplicates: boolean;
+      transactional: boolean;
+      tempPassword: boolean;
+      welcomeEmail: boolean;
+    },
   ) {
     const stringified = file.buffer.toString('utf-8');
-    const normalizeData = await this.parseCsv(stringified);
-    this.logger.log(normalizeData);
+    const parsed: unknown = await this.parseCsv(stringified);
+    return this.userService.bulkCreate(
+      parsed as Omit<SignupDto, 'password'>[],
+      options,
+    );
   }
   private async parseCsv(csvString: string) {
     return new Promise((resolve, reject) => {
       try {
-        const results = [];
+        const results: Record<string, string>[] = [];
         Readable.from(csvString)
           .pipe(csv())
-          .on('data', (data) => {
+          .on('data', (data: Record<string, string>) => {
             results.push(data);
           })
           .on('end', () => {
@@ -138,15 +145,4 @@ export class AuthService {
 
   async refresh() {}
   async welcomeEmail() {}
-
-  generateTempPassword(): string {
-    const length = 8;
-    const chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-  }
 }

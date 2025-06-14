@@ -12,11 +12,16 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { IJwt } from './config/interfaces/jwt.type';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { BullModule } from '@nestjs/bullmq';
+import { IRedis } from './config/interfaces/redis.interface';
 @Module({
   imports: [
     UserModule,
     ConfigModule.forRoot({
       load: [appConfig],
+      isGlobal: true,
+      cache: true,
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -27,6 +32,14 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
           ...dbConfig,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
         };
+      },
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const redisConfig = configService.get<IRedis>('redis');
+        return { connection: { ...redisConfig } };
       },
     }),
     ThrottlerModule.forRoot({

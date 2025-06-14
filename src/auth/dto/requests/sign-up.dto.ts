@@ -5,8 +5,8 @@ import {
   MinLength,
   IsOptional,
   IsEnum,
-  IsPhoneNumber,
   IsStrongPassword,
+  IsMobilePhone,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -70,7 +70,7 @@ export class SignupDto {
 
   @ApiProperty({ example: '+213560620999' })
   @IsString()
-  @IsPhoneNumber('DZ', { message: 'Invalid Algerian phone number format' })
+  @IsMobilePhone('ar-DZ')
   phoneNumber: string;
 
   @ApiPropertyOptional({ example: 'Computer Science' })

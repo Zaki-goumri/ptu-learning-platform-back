@@ -72,6 +72,7 @@ export class AuthController {
     description: 'User already exists due to duplicate email or phone number.',
     example: 'user already exist',
   })
+  @UseGuards(AccessTokenGuard, RoleGuard)
   @Post('/signup')
   @Roles(USER_ROLES.ADMIN)
   signup(@Body() signupDto: SignupDto): Promise<AuthDto> {
@@ -99,9 +100,14 @@ export class AuthController {
   @Post('/signup-many')
   signupMany(
     @UploadedFile() file: Express.Multer.File,
-    @Query(' temporary-password') tempPassword: boolean,
-    @Query(' welcome-email') welcomeEmail: boolean,
+    @Query('skip-duplicates') skipDuplicates: boolean,
+    @Query('welcome-email') welcomeEmail: boolean,
+    @Query('temporary-password') tempPassword: boolean,
   ) {
-    return this.authService.signupMany(file, tempPassword, welcomeEmail);
+    return this.authService.bulkSignup(file, {
+      skipDuplicates,
+      tempPassword,
+      welcomeEmail,
+    });
   }
 }

@@ -59,6 +59,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
+    "@nestjs/bullmq": "^11.0.2",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
@@ -81,6 +82,7 @@
     "@types/supertest": "^6.0.2",
     "@types/swagger-ui-express": "^4.1.8",
     "bcryptjs": "^3.0.2",
+    "bullmq": "^5.53.3",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
