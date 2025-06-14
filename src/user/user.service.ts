@@ -12,7 +12,9 @@ import { DataSource, Repository } from 'typeorm';
 import { RedisService } from 'src/redis/redis.service';
 import { generateHash } from 'src/common/utils/hash.utils';
 import { SignupDto } from 'src/auth/dto/requests/sign-up.dto';
-
+import { InjectQueue } from '@nestjs/bullmq';
+import { QUEUE_NAME } from 'src/common/constants/queues.name';
+import { Queue } from 'bullmq';
 @Injectable()
 export class UserService {
   logger = new Logger('auth');
@@ -21,6 +23,7 @@ export class UserService {
     private userRepositry: Repository<User>,
     private redisService: RedisService,
     private dataSource: DataSource,
+    @InjectQueue(QUEUE_NAME.MAIL_QUEUE) private readonly mailQueue: Queue,
   ) {}
   async create(createUser: SignupDto): Promise<User> {
     const hashedPassword = await generateHash(createUser.password);
@@ -124,7 +127,9 @@ export class UserService {
       }
       await userRepo.save(savedUsers);
       await queryRunner.commitTransaction();
-
+      if (welcomeEmail) {
+        await this.mailQueue.add('welcomeEmail', { message: 'welcome to ptu' });
+      }
       return { inserted: savedUsers.length };
     } catch (error) {
       await queryRunner.rollbackTransaction();

@@ -112,7 +112,6 @@ export class AuthService {
     file: Express.Multer.File,
     options: {
       skipDuplicates: boolean;
-      transactional: boolean;
       tempPassword: boolean;
       welcomeEmail: boolean;
     },

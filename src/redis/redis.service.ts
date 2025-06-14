@@ -1,10 +1,16 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+} from '@nestjs/common';
 import Redis from 'ioredis';
 import { ConfigService } from '@nestjs/config';
 import { IConfig } from 'src/config/interfaces/config.type';
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly redis: Redis;
+  private readonly logger = new Logger('redis');
   constructor(private readonly configService: ConfigService<IConfig>) {
     const redisUrl = this.configService.get<string>('redis.url', {
       infer: true,
@@ -14,12 +20,12 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   }
   async onModuleInit() {
     await this.redis.ping();
-    console.log('redis is connected');
+    this.logger.log('redis is connected');
   }
 
   async onModuleDestroy() {
     await this.redis.quit();
-    console.log('redis is disconnected');
+    this.logger.log('redis is disconnected');
   }
 
   async set(key: string, value: string, ttl: number = 3600): Promise<void> {
