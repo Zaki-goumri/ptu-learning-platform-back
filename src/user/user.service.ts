@@ -128,7 +128,7 @@ export class UserService {
       await userRepo.save(savedUsers);
       await queryRunner.commitTransaction();
       if (welcomeEmail) {
-        await this.mailQueue.add('welcomeEmail', { message: 'welcome to ptu' });
+        await this.mailQueue.add('welcomeEmail', users);
       }
       return { inserted: savedUsers.length };
     } catch (error) {

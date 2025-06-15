@@ -17,6 +17,7 @@ import { IRedis } from './config/interfaces/redis.interface';
 import { QUEUE_NAME } from './common/constants/queues.name';
 import { MailQueue } from './worker/queue/mail.queue';
 import { MailQueueEventListener } from './worker/event/mail.queue.event';
+import { MailService } from './mail/mail.service';
 @Module({
   imports: [
     UserModule,
@@ -85,6 +86,7 @@ import { MailQueueEventListener } from './worker/event/mail.queue.event';
       provide: 'APP_GUARD',
       useClass: ThrottlerGuard,
     },
+    MailService,
   ],
 })
 export class AppModule {
