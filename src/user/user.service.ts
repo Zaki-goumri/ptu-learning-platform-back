@@ -15,6 +15,7 @@ import { SignupDto } from 'src/auth/dto/requests/sign-up.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { QUEUE_NAME } from 'src/common/constants/queues.name';
 import { Queue } from 'bullmq';
+import { Optional } from 'src/common/types/optional.type';
 @Injectable()
 export class UserService {
   logger = new Logger('auth');
@@ -89,47 +90,86 @@ export class UserService {
   }
 
   async bulkCreate(
-    users: Omit<SignupDto, 'password'>[],
+    users: Optional<SignupDto, 'password'>[],
     options: {
       skipDuplicates: boolean;
       tempPassword: boolean;
       welcomeEmail: boolean;
     },
-  ) {
+  ): Promise<{ inserted: number }> {
     const { skipDuplicates, tempPassword, welcomeEmail } = options;
+
+    if (!tempPassword) {
+      const firstUserWithoutPassword = users.find((user) => !user?.password);
+      if (firstUserWithoutPassword) {
+        throw new BadRequestException(
+          `Password missing for user with email ${firstUserWithoutPassword.email} and tempPassword option is false`,
+        );
+      }
+    }
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     const userRepo = queryRunner.manager.getRepository(User);
-    const savedUsers: User[] = [];
+
     try {
+      const existingUsers = await this.findExistingUsers(userRepo, users);
+
+      const existingEmails = new Set(
+        existingUsers.map((u: User): string => u.email),
+      );
+      const existingPhones = new Set(
+        existingUsers.map((u: User): string => u.phoneNumber).filter(Boolean),
+      );
+
+      const processedEmails = new Set<string>();
+      const processedPhones = new Set<string>();
+
+      const validUsers: User[] = [];
+
       for (const dto of users) {
-        const exist = await userRepo.findOne({
-          where: [{ email: dto.email }, { phoneNumber: dto.phoneNumber }],
-        });
-        if (exist) {
-          if (skipDuplicates) continue;
-          else
+        const emailExists =
+          existingEmails.has(dto.email) || processedEmails.has(dto.email);
+        const phoneExists =
+          dto.phoneNumber &&
+          (existingPhones.has(dto.phoneNumber) ||
+            processedPhones.has(dto.phoneNumber));
+
+        if (emailExists || phoneExists) {
+          if (skipDuplicates) {
+            continue;
+          } else {
             throw new ConflictException(
               `User with email ${dto.email} or phone number ${dto.phoneNumber} already exists`,
             );
+          }
         }
+
+        processedEmails.add(dto.email);
+        if (dto.phoneNumber) {
+          processedPhones.add(dto.phoneNumber);
+        }
+
         const user = userRepo.create({
           ...dto,
-          password: tempPassword ? this.generateTempPassword() : undefined,
+          password: tempPassword ? this.generateTempPassword() : dto.password,
         });
-        if (!user.password) {
-          throw new BadRequestException(
-            `Password missing and tempPassword option is false`,
-          );
-        }
-        savedUsers.push(user);
+
+        validUsers.push(user);
       }
-      await userRepo.save(savedUsers);
+
+      const savedUsers =
+        validUsers.length > 0 ? await userRepo.save(validUsers) : [];
+
       await queryRunner.commitTransaction();
-      if (welcomeEmail) {
-        await this.mailQueue.add('welcomeEmail', users);
+
+      if (welcomeEmail && savedUsers.length > 0) {
+        this.mailQueue.add('welcomeEmail', savedUsers).catch((error) => {
+          this.logger.error('Failed to queue welcome emails:', error);
+        });
       }
+
       return { inserted: savedUsers.length };
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -137,6 +177,41 @@ export class UserService {
     } finally {
       await queryRunner.release();
     }
+  }
+  private async findExistingUsers(
+    userRepo: Repository<User>,
+    users: Optional<SignupDto, 'password'>[],
+  ): Promise<User[]> {
+    if (users.length === 0) return [];
+
+    const emails: string[] = [];
+    const phoneNumbers: string[] = [];
+
+    users.forEach((u) => {
+      if (u.email) emails.push(u.email);
+      if (u.phoneNumber) phoneNumbers.push(u.phoneNumber);
+    });
+    if (emails.length === 0 && phoneNumbers.length === 0) return [];
+
+    const queryBuilder = userRepo.createQueryBuilder('user');
+
+    if (emails.length > 0 && phoneNumbers.length > 0) {
+      queryBuilder.where(
+        'user.email IN (:...emails) OR user.phoneNumber IN (:...phoneNumbers)',
+        {
+          emails,
+          phoneNumbers,
+        },
+      );
+    } else if (emails.length > 0) {
+      queryBuilder.where('user.email IN (:...emails)', { emails });
+    } else {
+      queryBuilder.where('user.phoneNumber IN (:...phoneNumbers)', {
+        phoneNumbers,
+      });
+    }
+
+    return queryBuilder.getMany();
   }
 
   async delete(id: number): Promise<string> {

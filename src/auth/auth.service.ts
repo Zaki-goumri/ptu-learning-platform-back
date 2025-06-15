@@ -18,6 +18,7 @@ import { SignupDto } from './dto/requests/sign-up.dto';
 import { AuthDto } from './dto/response/auth-response';
 import csv from 'csv-parser';
 import { Readable } from 'stream';
+import { Optional } from 'src/common/types/optional.type';
 
 @Injectable()
 export class AuthService {
@@ -119,7 +120,7 @@ export class AuthService {
     const stringified = file.buffer.toString('utf-8');
     const parsed: unknown = await this.parseCsv(stringified);
     return this.userService.bulkCreate(
-      parsed as Omit<SignupDto, 'password'>[],
+      parsed as Optional<SignupDto, 'password'>[],
       options,
     );
   }
