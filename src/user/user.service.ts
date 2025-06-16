@@ -18,9 +18,10 @@ import { Queue } from 'bullmq';
 import { Optional } from 'src/common/types/optional.type';
 import { JOB_NAME } from 'src/common/constants/jobs.name';
 import { omit } from 'lodash';
+import { LOGGER } from 'src/common/constants/logger.name';
 @Injectable()
 export class UserService {
-  logger = new Logger('auth');
+  logger = new Logger(LOGGER.USER);
   constructor(
     @InjectRepository(User)
     private userRepositry: Repository<User>,
@@ -28,6 +29,10 @@ export class UserService {
     private dataSource: DataSource,
     @InjectQueue(QUEUE_NAME.MAIL_QUEUE) private readonly mailQueue: Queue,
   ) {}
+
+  static getUserCacheKey(criterion: string | number): string {
+    return `user:${criterion}`;
+  }
 
   async create(createUser: SignupDto): Promise<User> {
     const hashedPassword = await generateHash(createUser.password);
@@ -53,7 +58,9 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User> {
-    const cachedUser = await this.redisService.get<User>(`user_${id}`);
+    const cachedUser = await this.redisService.get<User>(
+      UserService.getUserCacheKey(id),
+    );
     if (cachedUser) return cachedUser;
 
     const userFound = await this.userRepositry.findOneById(id);
@@ -65,7 +72,7 @@ export class UserService {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    const cacheKey = `user_email_${email}`;
+    const cacheKey = UserService.getUserCacheKey(email);
     const cachedUser = await this.redisService.get<User>(cacheKey);
     if (cachedUser) return cachedUser;
 

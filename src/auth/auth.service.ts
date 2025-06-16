@@ -19,10 +19,11 @@ import { AuthDto } from './dto/response/auth-response';
 import csv from 'csv-parser';
 import { Readable } from 'stream';
 import { Optional } from 'src/common/types/optional.type';
+import { LOGGER } from 'src/common/constants/logger.name';
 
 @Injectable()
 export class AuthService {
-  private readonly logger = new Logger('auth');
+  private readonly logger = new Logger(LOGGER.AUTH);
   constructor(
     private jwtService: JwtService,
     private userService: UserService,

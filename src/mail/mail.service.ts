@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { User } from 'src/user/entities/user.entity';
 import { getWelcomeEmailTemplate } from './templates/welcome.template';
+import { LOGGER } from 'src/common/constants/logger.name';
 
 @Injectable()
 export class MailService {
@@ -10,7 +11,7 @@ export class MailService {
     SMTPTransport.SentMessageInfo,
     SMTPTransport.Options
   >;
-  private readonly logger = new Logger('mailing');
+  private readonly logger = new Logger(LOGGER.MAIL);
 
   constructor() {
     this.transporter = nodemailer.createTransport({
