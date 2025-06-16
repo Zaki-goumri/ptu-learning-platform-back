@@ -2,11 +2,10 @@ import { User } from 'src/user/entities/user.entity';
 import { emailStyles } from './styles/email.styles';
 
 interface WelcomeEmailProps {
-  user: User;
-  updateEmailLink?: string;
+  user: Omit<User, 'department' | 'year' | 'role' | 'yearGroup'>& {tempPass:string};
 }
 
-export const getWelcomeEmailTemplate = ({ user, updateEmailLink }: WelcomeEmailProps) => ({
+export const getWelcomeEmailTemplate = ({ user }: WelcomeEmailProps) => ({
   subject: 'Welcome to PTU',
   html: `<!DOCTYPE html>
 <html lang="en">
@@ -27,7 +26,7 @@ export const getWelcomeEmailTemplate = ({ user, updateEmailLink }: WelcomeEmailP
         
         <div class="content">
             <div class="greeting">
-                Dear ${user.firstName},
+                Dear ${user.firstName} ${user.lastName},
             </div>
             
             <div class="message">
@@ -38,21 +37,20 @@ export const getWelcomeEmailTemplate = ({ user, updateEmailLink }: WelcomeEmailP
                 Your learning journey begins here. Our platform provides comprehensive educational resources and tools designed to enhance your academic experience.
             </div>
             
-            ${updateEmailLink ? `
             <div class="section">
-                <div class="section-title">Email Address Verification</div>
+                <div class="section-title">Your Account Credentials</div>
                 <div class="section-text">
-                    To ensure secure communication and account management, please verify or update your email address by clicking the link below.
+                    Please use the following credentials to log in to your account:
                 </div>
-                <a href="${updateEmailLink}" class="cta-button">Update Email Address</a>
+                <div class="credentials">
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Temporary Password:</strong> ${user.password}</p>
+                </div>
             </div>
             
-            <div class="alert">
-                <div class="alert-text">
-                    Security Notice: This link will expire in 24 hours for your account protection.
-                </div>
+            <div class="message">
+                <strong>Important:</strong> For security reasons, you will be prompted to change your password on your first login.
             </div>
-            ` : ''}
             
             <div class="message">
                 If you have any questions or require assistance, please do not hesitate to contact our support team.
@@ -79,19 +77,18 @@ export const getWelcomeEmailTemplate = ({ user, updateEmailLink }: WelcomeEmailP
     </div>
 </body>
 </html>`,
-  text: `Dear ${user.firstName},
+  text: `Dear ${user.firstName} ${user.lastName},
 
 Welcome to PTU E-Learning Platform. We are pleased to confirm that your account has been successfully created and is now active.
 
 Your learning journey begins here. Our platform provides comprehensive educational resources and tools designed to enhance your academic experience.
 
-${updateEmailLink ? `
-EMAIL ADDRESS VERIFICATION
-To ensure secure communication and account management, please verify or update your password by visiting:
-${updateEmailLink}
+YOUR ACCOUNT CREDENTIALS
+Please use the following credentials to log in to your account:
+Email: ${user.email}
+Temporary Password: ${user.tempPass}
 
-SECURITY NOTICE: This link will expire in 24 hours for your account protection.
-` : ''}
+IMPORTANT: For security reasons, you will be prompted to change your password on your first login.
 
 If you have any questions or require assistance, please do not hesitate to contact our support team.
 
@@ -103,4 +100,5 @@ PTU E-Learning Team
 ---
 PTU E-Learning Platform
 This is an automated message. Please do not reply to this email.`
-}); 
+});
+

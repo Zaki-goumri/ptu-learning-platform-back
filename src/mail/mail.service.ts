@@ -22,10 +22,16 @@ export class MailService {
     });
   }
 
-  async sendBulkWelcomeEmail(users: User[]) {
+  async sendBulkWelcomeEmail(
+    users: (Omit<User, 'department' | 'year' | 'role' | 'yearGroup'> & {
+      tempPass: string;
+    })[],
+  ) {
     try {
       const emailPromises = users.map((user) => {
-        const { subject, html, text } = getWelcomeEmailTemplate({ user });
+        const { subject, html, text } = getWelcomeEmailTemplate({
+          user,
+        });
         return this.transporter.sendMail({
           from: 'ptuplatform@gmail.com',
           to: user.email,

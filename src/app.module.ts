@@ -18,6 +18,7 @@ import { QUEUE_NAME } from './common/constants/queues.name';
 import { MailQueue } from './worker/queue/mail.queue';
 import { MailQueueEventListener } from './worker/event/mail.queue.event';
 import { MailService } from './mail/mail.service';
+import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 @Module({
   imports: [
     UserModule,
@@ -62,6 +63,10 @@ import { MailService } from './mail/mail.service';
           limit: 3,
         },
       ],
+      storage: new ThrottlerStorageRedisService({
+        host: 'redis',
+        port: 6379,
+      }),
     }),
     RedisModule,
     AuthModule,

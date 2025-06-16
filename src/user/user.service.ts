@@ -16,6 +16,8 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { QUEUE_NAME } from 'src/common/constants/queues.name';
 import { Queue } from 'bullmq';
 import { Optional } from 'src/common/types/optional.type';
+import { JOB_NAME } from 'src/common/constants/jobs.name';
+import { omit } from 'lodash';
 @Injectable()
 export class UserService {
   logger = new Logger('auth');
@@ -26,16 +28,15 @@ export class UserService {
     private dataSource: DataSource,
     @InjectQueue(QUEUE_NAME.MAIL_QUEUE) private readonly mailQueue: Queue,
   ) {}
+
   async create(createUser: SignupDto): Promise<User> {
     const hashedPassword = await generateHash(createUser.password);
-
     const newUser = await this.userRepositry.save({
       ...createUser,
       password: hashedPassword,
     });
     if (!newUser)
       throw new ConflictException('there is an error in saving the user');
-    await this.redisService.set(`user_${newUser.id}`, JSON.stringify(newUser));
     return newUser;
   }
 
@@ -52,22 +53,21 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User> {
-    const cachedUser: string | null = await this.redisService.get(`user_${id}`);
-    if (cachedUser) {
-      const parsedUses = JSON.parse(cachedUser) as User;
-      return parsedUses;
-    }
+    const cachedUser = await this.redisService.get<User>(`user_${id}`);
+    if (cachedUser) return cachedUser;
+
     const userFound = await this.userRepositry.findOneById(id);
     if (!userFound) {
       throw new NotFoundException('the user does not exist');
     }
+    await this.redisService.set<User>(`user_${id}`, userFound);
     return userFound;
   }
 
   async findOneByEmail(email: string): Promise<User> {
     const cacheKey = `user_email_${email}`;
-    const cachedUser = await this.redisService.get(cacheKey);
-    if (cachedUser) return JSON.parse(cachedUser) as User;
+    const cachedUser = await this.redisService.get<User>(cacheKey);
+    if (cachedUser) return cachedUser;
 
     const userFound = await this.userRepositry.findOne({ where: { email } });
     if (!userFound)
@@ -85,7 +85,7 @@ export class UserService {
     });
     if (!updatedUser)
       throw new BadRequestException(`User with ID ${id} not updated`);
-    await this.redisService.set(`user_${id}`, JSON.stringify(updatedUser));
+    await this.redisService.set<User>(`user_${id}`, updatedUser);
     return updatedUser;
   }
 
@@ -102,8 +102,8 @@ export class UserService {
     if (!tempPassword) {
       const firstUserWithoutPassword = users.find((user) => !user?.password);
       if (firstUserWithoutPassword) {
-        throw new BadRequestException(
-          `Password missing for user with email ${firstUserWithoutPassword.email} and tempPassword option is false`,
+        throw new ConflictException(
+          `Password missing for some users with email and tempPassword option is false`,
         );
       }
     }
@@ -126,16 +126,14 @@ export class UserService {
       const processedEmails = new Set<string>();
       const processedPhones = new Set<string>();
 
-      const validUsers: User[] = [];
+      const validUsers: (User & { tempPass: string })[] = [];
 
       for (const dto of users) {
         const emailExists =
           existingEmails.has(dto.email) || processedEmails.has(dto.email);
         const phoneExists =
-          dto.phoneNumber &&
-          (existingPhones.has(dto.phoneNumber) ||
-            processedPhones.has(dto.phoneNumber));
-
+          existingPhones.has(dto.phoneNumber) ||
+          processedPhones.has(dto.phoneNumber);
         if (emailExists || phoneExists) {
           if (skipDuplicates) {
             continue;
@@ -151,12 +149,19 @@ export class UserService {
           processedPhones.add(dto.phoneNumber);
         }
 
+        const tempPass = tempPassword
+          ? this.generateTempPassword()
+          : dto?.password;
+        if (!tempPass)
+          throw new ConflictException(
+            `Password missing for some users with email and tempPassword option is false`,
+          );
         const user = userRepo.create({
           ...dto,
-          password: tempPassword ? this.generateTempPassword() : dto.password,
+          password: tempPass,
         });
 
-        validUsers.push(user);
+        validUsers.push({ ...user, tempPass });
       }
 
       const savedUsers =
@@ -165,9 +170,16 @@ export class UserService {
       await queryRunner.commitTransaction();
 
       if (welcomeEmail && savedUsers.length > 0) {
-        this.mailQueue.add('welcomeEmail', savedUsers).catch((error) => {
-          this.logger.error('Failed to queue welcome emails:', error);
-        });
+        this.mailQueue
+          .add(
+            JOB_NAME.SEND_WELCOME_EMAIL,
+            savedUsers.map((user) =>
+              omit(user, ['department', 'year', 'role', 'yearGroup']),
+            ),
+          )
+          .catch((error) => {
+            this.logger.error('Failed to queue welcome emails:', error);
+          });
       }
 
       return { inserted: savedUsers.length };
@@ -221,6 +233,7 @@ export class UserService {
     await this.redisService.delete(`user_${id}`);
     return 'user deleted';
   }
+
   private generateTempPassword(): string {
     const length = 8;
     const chars =
