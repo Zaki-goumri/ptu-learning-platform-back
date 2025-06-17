@@ -4,9 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole, USER_ROLE_VALUES } from '../types/user-role.type';
+import { Department } from 'src/departement/entities/departement.entity';
 
 @Entity()
 export class User {
@@ -52,20 +54,20 @@ export class User {
   role!: UserRole;
 
   @ApiProperty({
-    example: 'Engineering',
-    description: 'The department of the user (optional)',
-    nullable: true,
-  })
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  department: string | null;
-
-  @ApiProperty({
     example: '2023',
     description: 'The year group of the user (optional)',
     nullable: true,
   })
   @Column({ type: 'varchar', length: 50, nullable: true })
   yearGroup: string | null;
+
+  @ApiProperty({
+    example: 'computer science',
+    description: 'The department of study ',
+    required: true,
+  })
+  @ManyToOne(() => Department, (departement) => departement.id)
+  departement: Department;
 
   @ApiProperty({
     example: '2025-06-05T16:03:00Z',

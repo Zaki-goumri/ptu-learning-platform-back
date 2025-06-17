@@ -68,8 +68,8 @@ export class UserController {
   })
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  findById(@Param('id') id: string) {
+    return this.userService.findById(+id);
   }
   @HttpCode(HttpStatus.OK)
   @ApiOperation({

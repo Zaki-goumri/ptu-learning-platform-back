@@ -19,6 +19,8 @@ import { MailQueue } from './worker/queue/mail.queue';
 import { MailQueueEventListener } from './worker/event/mail.queue.event';
 import { MailService } from './mail/mail.service';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
+import { DepartementModule } from './departement/departement.module';
+import { DepartementModule } from './departement/departement.module';
 @Module({
   imports: [
     UserModule,
@@ -92,6 +94,7 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
         };
       },
     }),
+    DepartementModule,
   ],
   controllers: [AppController],
   providers: [

@@ -19,9 +19,13 @@ import { Optional } from 'src/common/types/optional.type';
 import { JOB_NAME } from 'src/common/constants/jobs.name';
 import { omit } from 'lodash';
 import { LOGGER } from 'src/common/constants/logger.name';
+import { PaginatedResponseDto } from 'src/common/dtos/pagination.dto';
 @Injectable()
 export class UserService {
   logger = new Logger(LOGGER.USER);
+  private static readonly CACHE_PREFIX = 'user';
+  private static readonly LIST_CACHE_PREFIX = 'users';
+
   constructor(
     @InjectRepository(User)
     private userRepositry: Repository<User>,
@@ -30,40 +34,57 @@ export class UserService {
     @InjectQueue(QUEUE_NAME.MAIL_QUEUE) private readonly mailQueue: Queue,
   ) {}
 
-  static getUserCacheKey(criterion: string | number): string {
-    return `user:${criterion}`;
+  static getUserCacheKey(criteria: string | number): string {
+    return `${UserService.CACHE_PREFIX}:${criteria}`;
   }
-
+  private static getUserListCacheKey(page: number, limit: number): string {
+    return `${UserService.LIST_CACHE_PREFIX}:page:${page}:limit:${limit}`;
+  }
   async create(createUser: SignupDto): Promise<User> {
     const hashedPassword = await generateHash(createUser.password);
-    const newUser = await this.userRepositry.save({
+    return await this.userRepositry.save({
       ...createUser,
       password: hashedPassword,
     });
-    if (!newUser)
-      throw new ConflictException('there is an error in saving the user');
-    return newUser;
   }
 
-  async findByPagination(page: number = 1, limit: number = 10) {
+  async findByPagination(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PaginatedResponseDto<User>> {
+    const cacheKey = UserService.getUserListCacheKey(page, limit);
+
+    const cachedData =
+      await this.redisService.get<PaginatedResponseDto<User>>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
     const skip = (page - 1) * limit;
-    const [data, total] = await this.userRepositry.findAndCount({
+    const [users, total] = await this.userRepositry.findAndCount({
       skip,
       take: limit,
-      order: { id: 'ASC' },
     });
-    if (!data) throw new NotFoundException('the users not found');
-    const result = { data, total, page, limit };
+    const result = {
+      data: users,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+
     return result;
   }
 
-  async findOne(id: number): Promise<User> {
+  async findById(id: number): Promise<User> {
     const cachedUser = await this.redisService.get<User>(
       UserService.getUserCacheKey(id),
     );
     if (cachedUser) return cachedUser;
 
-    const userFound = await this.userRepositry.findOneById(id);
+    const userFound = await this.userRepositry.findOne({ where: { id } });
     if (!userFound) {
       throw new NotFoundException('the user does not exist');
     }

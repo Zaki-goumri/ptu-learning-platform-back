@@ -78,13 +78,6 @@ export class SignupDto {
   @IsOptional()
   department?: string;
 
-  @ApiProperty({
-    type: [String],
-    example: ['Introduction to Computer Science'],
-  })
-  @IsString({ each: true })
-  courses: string[];
-
   @ApiProperty({ example: 'Year 1' })
   @IsString()
   yearGroup: string;

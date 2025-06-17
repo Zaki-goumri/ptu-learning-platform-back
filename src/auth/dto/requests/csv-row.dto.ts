@@ -79,17 +79,7 @@ export class CsvRowDto {
   @IsOptional()
   department?: string;
 
-  @ApiProperty({
-    type: [String],
-    example: ['Introduction to Computer Science'],
-  })
-  @IsOptional()
-  @IsString()
-  @Type(() => String)
-  courses?: string; //to do
-
   @ApiProperty({ example: 'Year 1' })
   @IsString()
   yearGroup: string;
 }
-
