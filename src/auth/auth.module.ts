@@ -7,9 +7,17 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 import { BullModule } from '@nestjs/bullmq';
+import { RedisModule } from 'src/redis/redis.module';
+import { QUEUE_NAME } from 'src/common/constants/queues.name';
 
 @Module({
-  imports: [UserModule, PassportModule, JwtModule, BullModule],
+  imports: [
+    UserModule,
+    PassportModule,
+    JwtModule,
+    RedisModule,
+    BullModule.registerQueue({ name: QUEUE_NAME.MAIL_QUEUE }),
+  ],
   controllers: [AuthController],
   providers: [AuthService, AcessTokenStrategy, RefreshTokenStrategy],
 })

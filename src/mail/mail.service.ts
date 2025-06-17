@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { User } from 'src/user/entities/user.entity';
 import { getWelcomeEmailTemplate } from './templates/welcome.template';
 import { LOGGER } from 'src/common/constants/logger.name';
+import { OtpMailProps, WelcomeEmailProps } from './types/mail-props.types';
+import { getPasswordResetEmailTemplate } from './templates/otp.template';
 
 @Injectable()
 export class MailService {
@@ -23,28 +24,38 @@ export class MailService {
     });
   }
 
-  async sendBulkWelcomeEmail(
-    users: (Omit<User, 'department' | 'year' | 'role' | 'yearGroup'> & {
-      tempPass: string;
-    })[],
-  ) {
+  async sendOtpEmail({ email, otp }: OtpMailProps) {
     try {
-      const emailPromises = users.map((user) => {
-        const { subject, html, text } = getWelcomeEmailTemplate({
-          user,
-        });
-        return this.transporter.sendMail({
-          from: 'ptuplatform@gmail.com',
-          to: user.email,
-          subject,
-          html,
-          text,
-        });
+      const { subject, html, text } = getPasswordResetEmailTemplate(otp);
+      await this.transporter.sendMail({
+        from: 'ptuplatform@gmail.com',
+        to: email,
+        subject,
+        html,
+        text,
       });
+      this.logger.log(`Sent OTP email to ${email} successfully`);
+    } catch (error) {
+      this.logger.error(`Failed to send OTP email to ${email}:`, error);
+      throw error;
+    }
+  }
 
-      const results = await Promise.all(emailPromises);
+  async sendBulkWelcomeEmail(users: WelcomeEmailProps[]) {
+    try {
+      const results = await Promise.all(
+        users.map((user) => {
+          const { subject, html, text } = getWelcomeEmailTemplate(user);
+          return this.transporter.sendMail({
+            from: 'ptuplatform@gmail.com',
+            to: user.email,
+            subject,
+            html,
+            text,
+          });
+        }),
+      );
       this.logger.log(`Sent ${results.length} emails successfully`);
-      return results;
     } catch (error) {
       this.logger.log('Error sending emails:', error);
       throw error;

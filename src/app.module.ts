@@ -59,8 +59,19 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
     ThrottlerModule.forRoot({
       throttlers: [
         {
+          name: 'short',
           ttl: 5000,
-          limit: 3,
+          limit: 5,
+        },
+        {
+          name: 'medium',
+          ttl: 1000 * 30,
+          limit: 10,
+        },
+        {
+          name: 'long',
+          ttl: 1000 * 60,
+          limit: 25,
         },
       ],
       storage: new ThrottlerStorageRedisService({

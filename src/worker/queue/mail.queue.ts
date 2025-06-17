@@ -4,7 +4,10 @@ import { Job } from 'bullmq';
 import { JOB_NAME } from 'src/common/constants/jobs.name';
 import { QUEUE_NAME } from 'src/common/constants/queues.name';
 import { MailService } from 'src/mail/mail.service';
-import { User } from 'src/user/entities/user.entity';
+import {
+  OtpMailProps,
+  WelcomeEmailProps,
+} from 'src/mail/types/mail-props.types';
 
 @Processor(QUEUE_NAME.MAIL_QUEUE, { concurrency: 3 })
 export class MailQueue extends WorkerHost {
@@ -12,27 +15,21 @@ export class MailQueue extends WorkerHost {
     super();
   }
   logger = new Logger(`${QUEUE_NAME.MAIL_QUEUE}`);
-  async process(
-    job: Job<
-      (Omit<User, 'department' | 'year' | 'role' | 'yearGroup'> & {
-        tempPass: string;
-      })[]
-    >,
-  ) {
+  async process(job: Job<WelcomeEmailProps[] | OtpMailProps>) {
     switch (job.name) {
       case JOB_NAME.SEND_WELCOME_EMAIL:
-        return await this.sendWelcomeEmail(job.data);
+        return await this.sendWelcomeEmail(job.data as WelcomeEmailProps[]);
+      case JOB_NAME.SEND_OTP_EMAIL:
+        return await this.sendOtpEmail(job.data as OtpMailProps);
     }
   }
 
-  async sendWelcomeEmail(
-    users: (Omit<User, 'department' | 'year' | 'role' | 'yearGroup'> & {
-      tempPass: string;
-    })[],
-  ) {
+  async sendWelcomeEmail(users: WelcomeEmailProps[]) {
     await this.mailService.sendBulkWelcomeEmail(users);
   }
-
+  async sendOtpEmail(user: OtpMailProps) {
+    await this.mailService.sendOtpEmail(user);
+  }
   @OnWorkerEvent('completed')
   onComplete(job: Job) {
     switch (job.name) {

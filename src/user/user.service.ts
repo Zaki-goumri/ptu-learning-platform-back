@@ -165,7 +165,7 @@ export class UserService {
           );
         const user = userRepo.create({
           ...dto,
-          password: tempPass,
+          password: await generateHash(tempPass),
         });
 
         validUsers.push({ ...user, tempPass });
@@ -173,7 +173,6 @@ export class UserService {
 
       const savedUsers =
         validUsers.length > 0 ? await userRepo.save(validUsers) : [];
-
       await queryRunner.commitTransaction();
 
       if (welcomeEmail && savedUsers.length > 0) {
@@ -181,7 +180,13 @@ export class UserService {
           .add(
             JOB_NAME.SEND_WELCOME_EMAIL,
             savedUsers.map((user) =>
-              omit(user, ['department', 'year', 'role', 'yearGroup']),
+              omit(user, [
+                'department',
+                'year',
+                'role',
+                'yearGroup',
+                'password',
+              ]),
             ),
           )
           .catch((error) => {
@@ -241,8 +246,7 @@ export class UserService {
     return 'user deleted';
   }
 
-  private generateTempPassword(): string {
-    const length = 8;
+  private generateTempPassword(length = 8): string {
     const chars =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';

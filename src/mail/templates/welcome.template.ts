@@ -1,13 +1,11 @@
-import { User } from 'src/user/entities/user.entity';
+import { WelcomeEmailProps } from '../types/mail-props.types';
 import { emailStyles } from './styles/email.styles';
 
-interface WelcomeEmailProps {
-  user: Omit<User, 'department' | 'year' | 'role' | 'yearGroup'>& {tempPass:string};
-}
-
-export const getWelcomeEmailTemplate = ({ user }: WelcomeEmailProps) => ({
-  subject: 'Welcome to PTU',
-  html: `<!DOCTYPE html>
+export const getWelcomeEmailTemplate = (user: WelcomeEmailProps) => {
+  console.log(user);
+  return {
+    subject: 'Welcome to PTU',
+    html: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -44,7 +42,7 @@ export const getWelcomeEmailTemplate = ({ user }: WelcomeEmailProps) => ({
                 </div>
                 <div class="credentials">
                     <p><strong>Email:</strong> ${user.email}</p>
-                    <p><strong>Temporary Password:</strong> ${user.password}</p>
+                    <p><strong>Temporary Password:</strong> ${user.tempPass}</p>
                 </div>
             </div>
             
@@ -77,7 +75,7 @@ export const getWelcomeEmailTemplate = ({ user }: WelcomeEmailProps) => ({
     </div>
 </body>
 </html>`,
-  text: `Dear ${user.firstName} ${user.lastName},
+    text: `Dear ${user.firstName} ${user.lastName},
 
 Welcome to PTU E-Learning Platform. We are pleased to confirm that your account has been successfully created and is now active.
 
@@ -99,6 +97,6 @@ PTU E-Learning Team
 
 ---
 PTU E-Learning Platform
-This is an automated message. Please do not reply to this email.`
-});
-
+This is an automated message. Please do not reply to this email.`,
+  };
+};

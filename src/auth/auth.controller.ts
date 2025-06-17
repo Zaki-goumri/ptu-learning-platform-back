@@ -30,6 +30,10 @@ import { Roles } from './decorators/role.decorator';
 import { AuthDto } from './dto/response/auth-response';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CsvValidationPipe } from './pipes/csv-validation.pipe';
+import { User as UserExtractor } from './decorators/user.decorator';
+import { User } from 'src/user/entities/user.entity';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
+import { Throttle } from '@nestjs/throttler';
 
 @ApiTooManyRequestsResponse({
   description: 'rate limiting to many messges',
@@ -81,10 +85,12 @@ export class AuthController {
     return this.authService.signup(signupDto);
   }
 
+  @UseGuards(AccessTokenGuard, RoleGuard)
+  @Roles(USER_ROLES.ADMIN)
   @UseInterceptors(
     FileInterceptor('file', {
       limits: {
-        fileSize: 1024 * 1024 * 10, 
+        fileSize: 1024 * 1024 * 10,
       },
       fileFilter: (req, file, callback) => {
         const allowedMimeTypes = ['text/csv', 'application/vnd.ms-excel'];
@@ -100,7 +106,7 @@ export class AuthController {
     }),
   )
   @Post('/bulk-signup')
-  signupMany(
+  bulkSignup(
     @UploadedFile(
       new ParseFilePipe({
         validators: [new CsvValidationPipe()],
@@ -117,5 +123,23 @@ export class AuthController {
       tempPassword,
       welcomeEmail,
     });
+  }
+  @UseGuards(RefreshTokenGuard)
+  @Post('/refresh')
+  async generateNewRefreshToken(@UserExtractor() payload: User) {
+    return await this.authService.refresh(payload);
+  }
+
+  @Post('/forget-password')
+  async fotgetPassword(@Body() { email }: { email: string }) {
+    return await this.authService.generateOtp(email);
+  }
+  @UseGuards(AccessTokenGuard)
+  @Post('/validate-otp')
+  async validateOtp(
+    @UserExtractor() user: User,
+    @Body() { otp }: { otp: string },
+  ) {
+    return this.authService.validateOtp(otp, user.id);
   }
 }
