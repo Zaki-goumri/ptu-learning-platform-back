@@ -20,6 +20,7 @@ import { JOB_NAME } from 'src/common/constants/jobs.name';
 import { omit } from 'lodash';
 import { LOGGER } from 'src/common/constants/logger.name';
 import { PaginatedResponseDto } from 'src/common/dtos/pagination.dto';
+import { DepartementService } from 'src/departement/departement.service';
 @Injectable()
 export class UserService {
   logger = new Logger(LOGGER.USER);
@@ -31,6 +32,7 @@ export class UserService {
     private userRepositry: Repository<User>,
     private redisService: RedisService,
     private dataSource: DataSource,
+    private departementService: DepartementService,
     @InjectQueue(QUEUE_NAME.MAIL_QUEUE) private readonly mailQueue: Queue,
   ) {}
 
@@ -41,11 +43,21 @@ export class UserService {
     return `${UserService.LIST_CACHE_PREFIX}:page:${page}:limit:${limit}`;
   }
   async create(createUser: SignupDto): Promise<User> {
+    const department = await this.departementService.findById(
+      createUser.departmentId,
+    );
+    if (!department) throw new NotFoundException('the department is not found');
     const hashedPassword = await generateHash(createUser.password);
     return await this.userRepositry.save({
       ...createUser,
       password: hashedPassword,
+      department,
     });
+    this.mailQueue
+      .add(JOB_NAME.SEND_WELCOME_EMAIL, [createUser])
+      .catch((error) => {
+        this.logger.error('Failed to queue welcome emails:', error);
+      });
   }
 
   async findByPagination(
@@ -64,6 +76,8 @@ export class UserService {
     const [users, total] = await this.userRepositry.findAndCount({
       skip,
       take: limit,
+      relations: ['department'],
+      select: { department: { name: true } },
     });
     const result = {
       data: users,
@@ -84,25 +98,44 @@ export class UserService {
     );
     if (cachedUser) return cachedUser;
 
-    const userFound = await this.userRepositry.findOne({ where: { id } });
+    const userFound = await this.userRepositry.findOne({
+      where: { id },
+      relations: ['department'],
+      select: { department: { name: true } },
+    });
     if (!userFound) {
       throw new NotFoundException('the user does not exist');
     }
-    await this.redisService.set<User>(`user_${id}`, userFound);
+    await this.redisService.set<User>(
+      UserService.getUserCacheKey(id),
+      userFound,
+    );
     return userFound;
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    const cacheKey = UserService.getUserCacheKey(email);
-    const cachedUser = await this.redisService.get<User>(cacheKey);
+    const cachedUser = await this.redisService.get<User>(
+      UserService.getUserCacheKey(email),
+    );
     if (cachedUser) return cachedUser;
 
-    const userFound = await this.userRepositry.findOne({ where: { email } });
+    const userFound = await this.userRepositry.findOne({
+      where: { email },
+      relations: ['department'],
+      select: { department: { name: true } },
+    });
     if (!userFound)
       throw new NotFoundException(
         `the user with email ${email} does not exist`,
       );
-    await this.redisService.set(cacheKey, JSON.stringify(userFound), 600);
+    await this.redisService.set<User>(
+      UserService.getUserCacheKey(email),
+      userFound,
+    );
+    await this.redisService.set<User>(
+      UserService.getUserCacheKey(userFound.id),
+      userFound,
+    );
     return userFound;
   }
 
