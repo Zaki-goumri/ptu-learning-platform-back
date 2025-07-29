@@ -19,7 +19,7 @@ import { MailQueue } from './worker/queue/mail.queue';
 import { MailQueueEventListener } from './worker/event/mail.queue.event';
 import { MailService } from './mail/mail.service';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { DepartementModule } from './departement/departement.module';
+import { ChatModule } from './chat/chat.module';
 import { DepartementModule } from './departement/departement.module';
 @Module({
   imports: [
@@ -95,6 +95,7 @@ import { DepartementModule } from './departement/departement.module';
       },
     }),
     DepartementModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [

@@ -77,7 +77,7 @@ export class UserService {
       skip,
       take: limit,
       relations: ['department'],
-      select: { department: { name: true } },
+      select: { departement: { label: true } },
     });
     const result = {
       data: users,
@@ -101,7 +101,7 @@ export class UserService {
     const userFound = await this.userRepositry.findOne({
       where: { id },
       relations: ['department'],
-      select: { department: { name: true } },
+      select: { departement: { label: true } },
     });
     if (!userFound) {
       throw new NotFoundException('the user does not exist');
@@ -122,7 +122,7 @@ export class UserService {
     const userFound = await this.userRepositry.findOne({
       where: { email },
       relations: ['department'],
-      select: { department: { name: true } },
+      select: { departement: { label: true } },
     });
     if (!userFound)
       throw new NotFoundException(

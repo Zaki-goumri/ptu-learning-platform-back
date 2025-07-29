@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsStrongPassword,
   IsMobilePhone,
+  IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -73,10 +74,10 @@ export class SignupDto {
   @IsMobilePhone('ar-DZ')
   phoneNumber: string;
 
-  @ApiPropertyOptional({ example: 'Computer Science' })
-  @IsString()
+  @ApiPropertyOptional({ example: 123 })
+  @IsNumber()
   @IsOptional()
-  department?: string;
+  departmentId: number;
 
   @ApiProperty({ example: 'Year 1' })
   @IsString()

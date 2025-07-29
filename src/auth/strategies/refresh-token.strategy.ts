@@ -36,7 +36,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     if (!payload || typeof payload?.sub !== 'number') {
       throw new UnauthorizedException('Invalid token payload');
     }
-    const user = await this.userService.findOne(payload.sub);
+    const user = await this.userService.findById(payload.sub);
     if (!user) throw new UnauthorizedException('User not found');
     return user;
   }
