@@ -8,6 +8,7 @@ services:
     container_name: ptu-server
     ports:
       - '3000:3000'
+      - '3001:3001'
     environment:
       NODE_ENV: development
       DB_HOST: db

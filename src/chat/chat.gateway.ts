@@ -16,7 +16,7 @@ import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 @UsePipes(
   new ValidationPipe({ exceptionFactory: (errors) => new WsException(errors) }),
 )
-@WebSocketGateway()
+@WebSocketGateway(3001, { cors: { origin: '*' } })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   constructor(private readonly chatService: ChatService) {}

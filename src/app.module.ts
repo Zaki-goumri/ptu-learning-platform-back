@@ -11,7 +11,7 @@ import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { IJwt } from './config/interfaces/jwt.type';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bullmq';
 import { IRedis } from './config/interfaces/redis.interface';
 import { QUEUE_NAME } from './common/constants/queues.name';
@@ -21,8 +21,18 @@ import { MailService } from './mail/mail.service';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { ChatModule } from './chat/chat.module';
 import { DepartementModule } from './departement/departement.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { CoursesModule } from './courses/courses.module';
+import { HybridThrottlerGuard } from './common/guards/throttler.guard';
 @Module({
   imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      graphiql: true,
+      autoSchemaFile: 'src/schema.graphql',
+      context: ({ req, resp }) => ({ req, resp }),
+    }),
     UserModule,
     ConfigModule.forRoot({
       load: [appConfig],
@@ -96,6 +106,7 @@ import { DepartementModule } from './departement/departement.module';
     }),
     DepartementModule,
     ChatModule,
+    CoursesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -104,7 +115,7 @@ import { DepartementModule } from './departement/departement.module';
     MailQueueEventListener,
     {
       provide: 'APP_GUARD',
-      useClass: ThrottlerGuard,
+      useClass: HybridThrottlerGuard,
     },
     MailService,
   ],
