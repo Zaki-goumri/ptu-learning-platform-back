@@ -5,12 +5,13 @@ import {
   MinLength,
   IsOptional,
   IsEnum,
-  IsPhoneNumber,
+  IsStrongPassword,
+  IsMobilePhone,
+  IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { UserRole } from '../types/user-role.type';
-import { USER_ROLES } from '../types/user-role.type';
+import { UserRole, USER_ROLES } from 'src/user/types/user-role.type';
 /**
  * DTO for creating a single user account.
  * @example {
@@ -42,6 +43,7 @@ export class CreateUserDto {
   @IsString({ message: 'Password must be a string ' })
   @IsNotEmpty({ message: 'password cant be empty' })
   @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @IsStrongPassword()
   @Type(() => String)
   password: string;
 
@@ -69,20 +71,13 @@ export class CreateUserDto {
 
   @ApiProperty({ example: '+213560620999' })
   @IsString()
-  @IsPhoneNumber()
+  @IsMobilePhone('ar-DZ')
   phoneNumber: string;
 
-  @ApiPropertyOptional({ example: 'Computer Science' })
-  @IsString()
+  @ApiPropertyOptional({ example: 123 })
+  @IsNumber()
   @IsOptional()
-  department?: string;
-
-  @ApiProperty({
-    type: [String],
-    example: ['Introduction to Computer Science'],
-  })
-  @IsString({ each: true })
-  courses: string[];
+  departmentId: number;
 
   @ApiProperty({ example: 'Year 1' })
   @IsString()

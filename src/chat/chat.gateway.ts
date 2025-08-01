@@ -10,8 +10,15 @@ import {
 import { ChatService } from './chat.service';
 import { SubscribeMessage, MessageBody } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { WsAuthGuard } from './guards/ws-auth.guard';
 
+@UseGuards(WsAuthGuard)
 @UseFilters(new BaseWsExceptionFilter())
 @UsePipes(
   new ValidationPipe({ exceptionFactory: (errors) => new WsException(errors) }),
@@ -26,7 +33,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   handleDisconnect(client: any) {
-    console.log('user disconnect ', client.id);
+    console.log('user disconnect ', client.id as string);
   }
   @SubscribeMessage('send')
   handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: string) {

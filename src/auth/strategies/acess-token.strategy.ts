@@ -33,7 +33,7 @@ export class AcessTokenStrategy extends PassportStrategy(
   async validate(
     payload: IAcessTokenPayload,
   ): Promise<User | NotFoundException> {
-    if (!payload || typeof payload?.sub !== 'number') {
+    if (!payload || !payload.sub) {
       throw new UnauthorizedException('Invalid token payload');
     }
     const user = await this.userService.findById(payload.sub);
