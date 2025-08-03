@@ -1,14 +1,46 @@
-import { Controller, Post, Body, Get, Query, Param, Patch, Delete, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Query,
+  Param,
+  Patch,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { CreateConversationDto } from './dtos/conversations/create-conversation.dto';
 import { PaginationQueryDto } from 'src/common/dtos/pagination.dto';
 import { UpdateConversationDto } from './dtos/conversations/update-conversatio.dto';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiCreatedResponse,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTooManyRequestsResponse,
+  ApiInternalServerErrorResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard'; // Assuming you have a JWT guard
 import { User } from 'src/auth/decorators/user.decorator';
 import { User as UserEntity } from 'src/user/entities/user.entity';
 
-@ApiTags('Conversations')
+@ApiTooManyRequestsResponse({
+  description: 'rate limiting to many messges',
+  example: 'ThrottlerException: Too Many Requests',
+})
+@ApiInternalServerErrorResponse({
+  description: 'internal server error',
+  example: 'internal server error',
+})
+@ApiUnauthorizedResponse({
+  description: 'Unauthorized user or Unauthorized role to do this action ',
+  example: 'Role STUDENT is not authorized for this action',
+})
 @ApiBearerAuth()
 @UseGuards(AccessTokenGuard)
 @Controller('conversations')
@@ -17,9 +49,14 @@ export class ConversationController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new conversation' })
-  @ApiResponse({ status: 201, description: 'The conversation has been successfully created.' })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createConversationDto: CreateConversationDto, @User() creator:UserEntity) {
+  @ApiCreatedResponse({
+    description: 'The conversation has been successfully created.',
+  })
+  @ApiBadRequestResponse({ description: 'Bad Request.' })
+  create(
+    @Body() createConversationDto: CreateConversationDto,
+    @User() creator: UserEntity,
+  ) {
     return this.conversationService.create(createConversationDto, creator.id);
   }
 
@@ -33,23 +70,30 @@ export class ConversationController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a conversation by ID' })
   @ApiResponse({ status: 200, description: 'Return a single conversation.' })
-  @ApiResponse({ status: 404, description: 'Conversation not found.' })
+  @ApiNotFoundResponse({ description: 'Conversation not found.' })
   findOne(@Param('id') id: string) {
     return this.conversationService.findOne(id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a conversation' })
-  @ApiResponse({ status: 200, description: 'The conversation has been successfully updated.' })
-  @ApiResponse({ status: 404, description: 'Conversation not found.' })
-  update(@Param('id') id: string, @Body() updateConversationDto: UpdateConversationDto) {
+  @ApiOkResponse({
+    description: 'The conversation has been successfully updated.',
+  })
+  @ApiNotFoundResponse({ description: 'Conversation not found.' })
+  update(
+    @Param('id') id: string,
+    @Body() updateConversationDto: UpdateConversationDto,
+  ) {
     return this.conversationService.update(id, updateConversationDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a conversation' })
-  @ApiResponse({ status: 200, description: 'The conversation has been successfully deleted.' })
-  @ApiResponse({ status: 404, description: 'Conversation not found.' })
+  @ApiOkResponse({
+    description: 'The conversation has been successfully deleted.',
+  })
+  @ApiNotFoundResponse({ description: 'Conversation not found.' })
   remove(@Param('id') id: string) {
     return this.conversationService.remove(id);
   }

@@ -1,7 +1,7 @@
 import { UserRole } from 'src/user/types/user-role.type';
 
 export interface ITokenPayload {
-  sub: number;
+  sub: string;
   role: UserRole;
 }
 /*eslint-disable*/

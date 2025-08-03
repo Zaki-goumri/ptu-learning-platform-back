@@ -32,7 +32,7 @@ import { JOB_NAME } from 'src/common/constants/jobs.name';
 export class AuthService {
   private readonly logger = new Logger(LOGGER.AUTH);
 
-  static getOtpKey(id: number) {
+  static getOtpKey(id: string) {
     return `otp:${id}`;
   }
   constructor(
@@ -193,7 +193,7 @@ export class AuthService {
     return 'otp is sent';
   }
 
-  async validateOtp(sentOtp: string, userId: number) {
+  async validateOtp(sentOtp: string, userId: string) {
     const cachedOtp = await this.redisService.get<string>(
       AuthService.getOtpKey(userId),
     );

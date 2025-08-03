@@ -17,6 +17,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { WsAuthGuard } from './guards/ws-auth.guard';
+import { IClient } from './types/client.type';
+import { error } from 'console';
 
 @UseGuards(WsAuthGuard)
 @UseFilters(new BaseWsExceptionFilter())
@@ -28,15 +30,30 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
   constructor(private readonly chatService: ChatService) {}
 
-  handleConnection(client: Socket) {
-    console.log('new user is connected', client.id);
+  handleConnection(client: IClient) {
+    console.log('new user is connected', client.data.user.sub);
   }
 
-  handleDisconnect(client: any) {
-    console.log('user disconnect ', client.id as string);
+  handleDisconnect(client: IClient) {
+    console.log('user disconnect ', client.data.user.sub);
   }
   @SubscribeMessage('send')
-  handleEvent(@ConnectedSocket() client: Socket, @MessageBody() data: string) {
-    this.server.emit('reply', data);
+  async handleEvent(
+    @ConnectedSocket() client: IClient,
+    @MessageBody()
+    { conversationId, content }: { conversationId: string; content: string },
+  ) {
+    const user = client.data.user;
+    const isMember = await this.chatService.checkMembership(
+      user.sub,
+      conversationId,
+    );
+    if (!isMember) throw new WsException('the user is not a member ');
+    const message = await this.chatService.create({
+      senderId: user.sub,
+      content,
+      conversationId,
+    });
+    this.server.to(conversationId).emit('reply', { message });
   }
 }

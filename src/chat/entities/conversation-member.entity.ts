@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Conversation } from './conversation.entity';
 import { User } from 'src/user/entities/user.entity';
 
@@ -7,7 +13,8 @@ export const conversationMemberRole = {
   MEMBER: 'MEMBER',
 } as const;
 
-export type ConversationMemeberRole = (typeof conversationMemberRole)[keyof typeof conversationMemberRole]
+export type ConversationMemeberRole =
+  (typeof conversationMemberRole)[keyof typeof conversationMemberRole];
 
 @Entity()
 export class ConversationMember {
@@ -27,6 +34,12 @@ export class ConversationMember {
 
   @Column({ default: false })
   muted: boolean;
+
+  @Column()
+  conversationId: string;
+
+  @Column()
+  userId: string;
 
   @Column({
     type: 'enum',

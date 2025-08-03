@@ -69,7 +69,7 @@ export class UserController {
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
   @Get(':id')
   findById(@Param('id') id: string) {
-    return this.userService.findById(+id);
+    return this.userService.findById(id);
   }
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -84,7 +84,7 @@ export class UserController {
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+    return this.userService.update(id, updateUserDto);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -101,6 +101,6 @@ export class UserController {
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
   @Delete(':id')
   delete(@Param('id') id: string) {
-    return this.userService.delete(+id);
+    return this.userService.delete(id);
   }
 }

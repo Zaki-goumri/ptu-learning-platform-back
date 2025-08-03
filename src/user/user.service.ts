@@ -53,11 +53,6 @@ export class UserService {
       password: hashedPassword,
       department,
     });
-    this.mailQueue
-      .add(JOB_NAME.SEND_WELCOME_EMAIL, [createUser])
-      .catch((error) => {
-        this.logger.error('Failed to queue welcome emails:', error);
-      });
   }
 
   async findByPagination(
@@ -92,7 +87,7 @@ export class UserService {
     return result;
   }
 
-  async findById(id: number): Promise<User> {
+  async findById(id: string): Promise<User> {
     const cachedUser = await this.redisService.get<User>(
       UserService.getUserCacheKey(id),
     );
@@ -139,7 +134,7 @@ export class UserService {
     return userFound;
   }
 
-  async update(id: number, updateUserData: UpdateUserDto): Promise<User> {
+  async update(id: string, updateUserData: UpdateUserDto): Promise<User> {
     const updatedUser = await this.userRepositry.save({
       ...updateUserData,
       id,
@@ -292,7 +287,7 @@ export class UserService {
     return queryBuilder.getMany();
   }
 
-  async delete(id: number): Promise<string> {
+  async delete(id: string): Promise<string> {
     const deletedUser = await this.userRepositry.delete(id);
     if (deletedUser.affected === 0)
       throw new NotFoundException(`User with ID ${id} not found`);
