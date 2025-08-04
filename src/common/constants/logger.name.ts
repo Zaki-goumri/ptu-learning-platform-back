@@ -3,4 +3,5 @@ export const LOGGER = {
   USER: 'USER',
   MAIL: 'MAIL',
   CONVERSATION: 'CONVERSATION',
+  GLOABL_LOGGING: 'GLOABL_LOGGING',
 } as const;

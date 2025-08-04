@@ -22,7 +22,7 @@ export class ChatService {
   ) {}
   async create(createMessageDto: CreateMessageDto) {
     const message = this.messageRepositry.create(createMessageDto);
-    await this.messageRepositry.save(message);
+    return await this.messageRepositry.save(message);
   }
   private static getMessageListCacheKey(
     conversationId: string,
@@ -70,5 +70,14 @@ export class ChatService {
       },
     });
     return conversation ? true : false;
+  }
+
+  async getUserRooms(userId: string) {
+    const rooms = await this.conversationMemberRepo.find({
+      where: { userId },
+      select: { conversationId: true },
+    });
+
+    return rooms.map((element) => element.conversationId);
   }
 }

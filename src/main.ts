@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { ValidationPipe } from '@nestjs/common';
+import { LoggerInterceptor } from './global/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -16,6 +17,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.useGlobalInterceptors(new LoggerInterceptor());
   const config = new DocumentBuilder()
     .setTitle('Ptu api docs')
     .setDescription('this is the api docs of ptu  ')

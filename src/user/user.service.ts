@@ -42,6 +42,7 @@ export class UserService {
   private static getUserListCacheKey(page: number, limit: number): string {
     return `${UserService.LIST_CACHE_PREFIX}:page:${page}:limit:${limit}`;
   }
+
   async create(createUser: SignupDto): Promise<User> {
     const department = await this.departementService.findById(
       createUser.departmentId,
@@ -63,28 +64,17 @@ export class UserService {
 
     const cachedData =
       await this.redisService.get<PaginatedResponseDto<User>>(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
+    if (cachedData) return cachedData;
 
     const skip = (page - 1) * limit;
-    const [users, total] = await this.userRepositry.findAndCount({
+    const [data, total] = await this.userRepositry.findAndCount({
       skip,
       take: limit,
       relations: ['department'],
       select: { departement: { label: true } },
     });
-    const result = {
-      data: users,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
 
-    return result;
+    return new PaginatedResponseDto(data, total, page, limit);
   }
 
   async findById(id: string): Promise<User> {
