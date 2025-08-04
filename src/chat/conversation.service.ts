@@ -12,6 +12,7 @@ import {
 import { UpdateConversationDto } from './dtos/conversations/update-conversatio.dto';
 import { LOGGER } from 'src/common/constants/logger.name';
 import { RedisService } from 'src/redis/redis.service';
+import { CONVERSATION_MEMBER_ROLE } from './types/memebe_role.type';
 @Injectable()
 export class ConversationService {
   logger = new Logger(LOGGER.USER);
@@ -62,7 +63,7 @@ export class ConversationService {
       return this.conversationMemberRepository.create({
         conversation: savedConversation,
         user: member,
-        role: member.id === creatorId ? 'ADMIN' : 'MEMBER',
+        role: CONVERSATION_MEMBER_ROLE.ADMIN,
       });
     });
 

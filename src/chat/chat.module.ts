@@ -7,7 +7,7 @@ import { WsAuthGuard } from './guards/ws-auth.guard';
 import { RedisModule } from 'src/redis/redis.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Conversation, ConversationMember, Message } from './entities';
-
+import { ChatController } from './chat.controller';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { Conversation, ConversationMember, Message } from './entities';
     RedisModule,
     TypeOrmModule.forFeature([Message, Conversation, ConversationMember]),
   ],
-  controllers: [require('./chat.controller').ChatController],
+  controllers: [ChatController],
   providers: [ChatGateway, ChatService, WsAuthGuard],
 })
 export class ChatModule {}

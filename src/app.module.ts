@@ -25,8 +25,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CoursesModule } from './courses/courses.module';
 import { HybridThrottlerGuard } from './common/guards/throttler.guard';
+import { HealthModule } from './health/health.module';
+
 @Module({
   imports: [
+    HealthModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       graphiql: true,

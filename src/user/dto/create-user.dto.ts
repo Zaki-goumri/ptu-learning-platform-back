@@ -77,7 +77,7 @@ export class CreateUserDto {
   @ApiPropertyOptional({ example: 123 })
   @IsNumber()
   @IsOptional()
-  departmentId: number;
+  departmentId: string;
 
   @ApiProperty({ example: 'Year 1' })
   @IsString()

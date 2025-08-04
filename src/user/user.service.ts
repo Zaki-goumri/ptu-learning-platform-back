@@ -25,7 +25,6 @@ import { DepartementService } from 'src/departement/departement.service';
 export class UserService {
   logger = new Logger(LOGGER.USER);
   private static readonly CACHE_PREFIX = 'user';
-  private static readonly LIST_CACHE_PREFIX = 'users';
 
   constructor(
     @InjectRepository(User)
@@ -38,9 +37,6 @@ export class UserService {
 
   static getUserCacheKey(criteria: string | number): string {
     return `${UserService.CACHE_PREFIX}:${criteria}`;
-  }
-  private static getUserListCacheKey(page: number, limit: number): string {
-    return `${UserService.LIST_CACHE_PREFIX}:page:${page}:limit:${limit}`;
   }
 
   async create(createUser: SignupDto): Promise<User> {
@@ -60,12 +56,6 @@ export class UserService {
     page: number = 1,
     limit: number = 10,
   ): Promise<PaginatedResponseDto<User>> {
-    const cacheKey = UserService.getUserListCacheKey(page, limit);
-
-    const cachedData =
-      await this.redisService.get<PaginatedResponseDto<User>>(cacheKey);
-    if (cachedData) return cachedData;
-
     const skip = (page - 1) * limit;
     const [data, total] = await this.userRepositry.findAndCount({
       skip,

@@ -4,24 +4,19 @@ import { Repository } from 'typeorm';
 import { Department } from './entities/departement.entity';
 import { CreateDepartementDto } from './dto/create-departement.dto';
 import { UpdateDepartementDto } from './dto/update-departement.dto';
-import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { RedisService } from '../redis/redis.service';
-import { PaginatedResponseDto } from 'src/common/dtos/pagination.dto';
+import {
+  PaginatedResponseDto,
+  PaginationQueryDto,
+} from 'src/common/dtos/pagination.dto';
 
 @Injectable()
 export class DepartementService {
   private static readonly CACHE_PREFIX = 'department';
   private static readonly LIST_CACHE_PREFIX = 'departments';
 
-  private static getDepartmentCacheKey(id: number): string {
+  private static getDepartmentCacheKey(id: string): string {
     return `${DepartementService.CACHE_PREFIX}:${id}`;
-  }
-
-  private static getDepartmentsListCacheKey(
-    page: number,
-    limit: number,
-  ): string {
-    return `${DepartementService.LIST_CACHE_PREFIX}:page:${page}:limit:${limit}`;
   }
 
   constructor(
@@ -41,14 +36,6 @@ export class DepartementService {
     page = 1,
     limit = 10,
   }: PaginationQueryDto): Promise<PaginatedResponseDto<Department>> {
-    const cacheKey = DepartementService.getDepartmentsListCacheKey(page, limit);
-
-    const cachedData =
-      await this.redisService.get<PaginatedResponseDto<Department>>(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
-
     const skip = (page - 1) * limit;
     const [departments, total] = await this.departmentRepository.findAndCount({
       skip,
@@ -65,11 +52,10 @@ export class DepartementService {
       },
     };
 
-    await this.redisService.set(cacheKey, result);
     return result;
   }
 
-  async findById(id: number): Promise<Department> {
+  async findById(id: string): Promise<Department> {
     const cacheKey = DepartementService.getDepartmentCacheKey(id);
     const cachedData = await this.redisService.get<Department>(cacheKey);
 
@@ -86,7 +72,7 @@ export class DepartementService {
   }
 
   async update(
-    id: number,
+    id: string,
     updateDepartementDto: UpdateDepartementDto,
   ): Promise<Department> {
     return await this.departmentRepository.save({
@@ -95,7 +81,7 @@ export class DepartementService {
     });
   }
 
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     const deletedDepartements = await this.departmentRepository.delete(id);
     if (deletedDepartements)
       throw new NotFoundException('department not found');

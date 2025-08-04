@@ -23,14 +23,14 @@ export class LoggerInterceptor implements NestInterceptor {
     const requestMethod = request.method;
 
     this.logger.log(
-      `🚀 Request started from IP: ${userIp}, Path: ${requestPath}, Method: ${requestMethod} at ${new Date(startTime).toISOString()}`,
+      `🚀  Request started from IP: ${userIp}, Path: ${requestPath}, Method: ${requestMethod} at ${new Date(startTime).toISOString()}`,
     );
     return next.handle().pipe(
       tap(() => {
         const endTime = Date.now();
         const responseTime = endTime - startTime;
         this.logger.log(
-          `✅ Response completed in ${responseTime}ms ${responseTime < 100 ? '🔥' : responseTime < 300 ? `🌀` : '🐢'}`,
+          `✅  Response completed in ${responseTime}ms ${responseTime < 100 ? '🔥' : responseTime < 300 ? `🌀` : '🐢'}`,
         );
       }),
     );

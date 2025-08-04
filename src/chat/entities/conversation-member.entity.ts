@@ -7,14 +7,10 @@ import {
 } from 'typeorm';
 import { Conversation } from './conversation.entity';
 import { User } from 'src/user/entities/user.entity';
-
-export const conversationMemberRole = {
-  ADMIN: 'ADMIN',
-  MEMBER: 'MEMBER',
-} as const;
-
-export type ConversationMemeberRole =
-  (typeof conversationMemberRole)[keyof typeof conversationMemberRole];
+import {
+  CONVERSATION_MEMBER_ROLE,
+  ConversationMemeberRoleType,
+} from '../types/memebe_role.type';
 
 @Entity()
 export class ConversationMember {
@@ -43,8 +39,8 @@ export class ConversationMember {
 
   @Column({
     type: 'enum',
-    enum: conversationMemberRole,
-    default: conversationMemberRole.MEMBER,
+    enum: CONVERSATION_MEMBER_ROLE,
+    default: CONVERSATION_MEMBER_ROLE.MEMBER,
   })
-  role: ConversationMemeberRole;
+  role: ConversationMemeberRoleType;
 }

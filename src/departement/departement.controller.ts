@@ -18,15 +18,9 @@ import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { RoleGuard } from '../auth/guards/role.guard';
 import { Roles } from '../auth/decorators/role.decorator';
 import { USER_ROLES } from '../user/types/user-role.type';
-import { PaginationQueryDto } from './dto/pagination-query.dto';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiOkResponse,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
+import { PaginationQueryDto } from 'src/common/dtos/pagination.dto';
 
-@ApiTags('departements')
 @Controller('departement')
 export class DepartementController {
   constructor(private readonly departementService: DepartementService) {}
@@ -54,7 +48,7 @@ export class DepartementController {
   @ApiOperation({ summary: 'Get department by id' })
   @ApiOkResponse({ description: 'Return department by id' })
   async findOne(@Param('id') id: string) {
-    return await this.departementService.findById(+id);
+    return await this.departementService.findById(id);
   }
 
   @Patch(':id')
@@ -66,7 +60,7 @@ export class DepartementController {
     @Param('id') id: string,
     @Body() updateDepartementDto: UpdateDepartementDto,
   ) {
-    return await this.departementService.update(+id, updateDepartementDto);
+    return await this.departementService.update(id, updateDepartementDto);
   }
 
   @Delete(':id')
@@ -75,6 +69,6 @@ export class DepartementController {
   @ApiOperation({ summary: 'Delete department by id' })
   @ApiResponse({ status: 200, description: 'Department deleted successfully' })
   async remove(@Param('id') id: string) {
-    return await this.departementService.delete(+id);
+    return await this.departementService.delete(id);
   }
 }

@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole, USER_ROLE_VALUES } from '../types/user-role.type';
@@ -66,7 +67,8 @@ export class User {
     description: 'The department of study ',
     required: true,
   })
-  @ManyToOne(() => Department, (departement) => departement.id)
+  @ManyToOne(() => Department)
+  @JoinColumn({ name: 'departmentId' })
   departement: Department;
 
   @ApiProperty({

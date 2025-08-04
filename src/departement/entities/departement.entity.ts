@@ -10,8 +10,8 @@ import {
 @Entity()
 export class Department {
   @ApiProperty({ example: 1, description: 'The unique identifier of the user' })
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ApiProperty({
     example: 'computer science',

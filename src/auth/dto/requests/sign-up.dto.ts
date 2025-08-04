@@ -1,4 +1,3 @@
-
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 /**
  * DTO for creating a single user account.
@@ -13,6 +12,4 @@ import { CreateUserDto } from 'src/user/dto/create-user.dto';
  *   "courses": ["Introduction to Computer Science"]
  * }
  */
-export class SignupDto extends CreateUserDto {
-  
-}
+export class SignupDto extends CreateUserDto {}
