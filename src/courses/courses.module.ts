@@ -5,9 +5,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
 import { RedisModule } from 'src/redis/redis.module';
 import { UserModule } from 'src/user/user.module';
+import { EnrollmentService } from './enrollement.service';
+import { Enrollment } from './entities/enrollment.entity';
+import { EnrollmentController } from './enrollement.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Course]), RedisModule, UserModule],
-  providers: [CoursesResolver, CoursesService],
+  imports: [
+    TypeOrmModule.forFeature([Course, Enrollment]),
+    RedisModule,
+    UserModule,
+  ],
+  controllers: [EnrollmentController],
+  providers: [CoursesResolver, CoursesService, EnrollmentService],
 })
 export class CoursesModule {}

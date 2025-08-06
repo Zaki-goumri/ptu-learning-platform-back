@@ -8,6 +8,7 @@ import { RedisService } from 'src/redis/redis.service';
 import { UpdateCourseInput } from './dtos/requests/update-course';
 import { CreateCourseInput } from './dtos/requests/create-course';
 import { PaginatedCoursesResponse } from './types/pagination-courses.gql';
+import { EnrollmentService } from './enrollement.service';
 
 @Injectable()
 export class CoursesService {
@@ -20,13 +21,10 @@ export class CoursesService {
   constructor(
     @InjectRepository(Course)
     private readonly courseRepositry: Repository<Course>,
-    private readonly userService: UserService,
     private readonly redisService: RedisService,
   ) {}
 
   async create(createDto: CreateCourseInput) {
-    const teacher = await this.userService.findById(createDto.teacherId);
-    if (!teacher) throw new NotFoundException('the teacher is not found');
     const course = this.courseRepositry.create(createDto);
     return this.courseRepositry.save(course);
   }
@@ -55,19 +53,6 @@ export class CoursesService {
   async remove(courseId: string) {
     await this.redisService.delete(CoursesService.getCourseCacheKey(courseId));
     return await this.courseRepositry.delete({ id: courseId });
-  }
-
-  /**
-   * Enroll a student in a course (stub).
-   * @param courseId
-   * @param studentId
-   * @returns Course
-   */
-  async enroll(courseId: string, studentId: string) {
-    // TODO: Implement enrollment logic (e.g., add student to participants)
-    const course = await this.findOne(courseId);
-    // Optionally, check if already enrolled, etc.
-    return course;
   }
 
   async update(updateCourseDto: UpdateCourseInput, id: string) {

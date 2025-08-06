@@ -1,6 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { ENROLLMENT_STATUS, EnrollmentStatus } from '../types/enrollment-status.type';
+import {
+  ENROLLMENT_STATUS,
+  EnrollmentStatus,
+} from '../types/enrollment-status.type';
+import { User } from 'src/user/entities/user.entity';
+import { Course } from './course.entity';
 
 @Entity()
 export class Enrollment {
@@ -11,19 +24,21 @@ export class Enrollment {
   })
   id: string;
 
-  @Column()
+  @ManyToOne(() => User, { eager: true })
+  @JoinColumn({ name: 'userId' })
   @ApiProperty({
     example: '123e4567-e89b-12d3-a456-426614174000',
     description: 'The user who enrolled in the course',
   })
-  userId: string;
+  student: User;
 
-  @Column()
+  @ManyToOne(() => Course, { eager: true })
+  @JoinColumn({ name: 'couserId' })
   @ApiProperty({
     example: '123e4567-e89b-12d3-a456-426614174000',
     description: 'The course that the user enrolled in',
   })
-  courseId: string;
+  course: Course;
 
   @Column({
     type: 'enum',
@@ -34,6 +49,7 @@ export class Enrollment {
     example: 'PENDING',
     description: 'The status of the enrollment',
     enum: ENROLLMENT_STATUS,
+    default: ENROLLMENT_STATUS.PENDING,
   })
   status: EnrollmentStatus;
 
@@ -44,11 +60,14 @@ export class Enrollment {
   })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
   @ApiProperty({
     example: '2024-01-15T08:30:00.000Z',
     description: 'Timestamp when the enrollment was last updated',
   })
   updatedAt: Date;
-  
 }

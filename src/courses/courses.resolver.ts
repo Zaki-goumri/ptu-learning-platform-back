@@ -7,12 +7,17 @@ import { CreateCourseInput } from './dtos/requests/create-course';
 import { UpdateCourseInput } from './dtos/requests/update-course';
 import { RemoveCourseResponse } from './types/remove-course.gql';
 import { PaginatedCoursesResponse } from './types/pagination-courses.gql';
+import { EnrollmentService } from './enrollement.service';
+import { Enrollment } from './types/enrollement.gql';
 
 @Resolver()
 @SkipThrottle()
 @Injectable()
 export class CoursesResolver {
-  constructor(private readonly coursesService: CoursesService) {}
+  constructor(
+    private readonly coursesService: CoursesService,
+    private readonly enrollementService: EnrollmentService,
+  ) {}
 
   // GET /courses (list all courses)
   // @Roles('any')
@@ -34,7 +39,9 @@ export class CoursesResolver {
   // POST /courses (teacher/admin)
   // @Roles('teacher', 'admin')
   @Mutation(() => Course)
-  async createCourse(@Args('createCourseDto') createCourseDto: CreateCourseInput) {
+  async createCourse(
+    @Args('createCourseDto') createCourseDto: CreateCourseInput,
+  ) {
     return await this.coursesService.create(createCourseDto);
   }
 
@@ -57,12 +64,11 @@ export class CoursesResolver {
 
   // POST /courses/:id/enroll (student)
   // @Roles('student')
-  @Mutation(() => Course)
+  @Mutation(() => Enrollment)
   async enrollInCourse(
-    @Args('id') id: string,
+    @Args('courseId') courseId: string,
     @Args('studentId') studentId: string, // adjust if you use current user context
   ) {
-    return await this.coursesService.enroll(id, studentId);
+    return await this.enrollementService.create(courseId, studentId);
   }
 }
-

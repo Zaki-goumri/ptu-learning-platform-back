@@ -82,6 +82,22 @@ type RemoveCourseResponse {
   raw: [String!]
 }
 
+type Enrollment {
+  id: ID!
+  student: User!
+  course: Course!
+  status: EnrollmentStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum EnrollmentStatus {
+  ACCEPTED
+  REJECTED
+  PENDING
+  SUSPENDED
+}
+
 type Query {
   courses(page: Int, limit: Int): PaginatedCoursesResponse!
   course(id: String!): Course!
@@ -91,7 +107,7 @@ type Mutation {
   createCourse(createCourseDto: CreateCourseInput!): Course!
   updateCourse(id: String!, updateDto: UpdateCourseInput!): Course
   deleteCourse(id: String!): RemoveCourseResponse!
-  enrollInCourse(id: String!, studentId: String!): Course!
+  enrollInCourse(courseId: String!, studentId: String!): Enrollment!
 }
 
 input CreateCourseInput {
