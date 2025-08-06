@@ -25,7 +25,7 @@ import {
   ApiInternalServerErrorResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AccessTokenGuard } from 'src/auth/guards/access-token.guard'; // Assuming you have a JWT guard
+import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { User } from 'src/auth/decorators/user.decorator';
 import { User as UserEntity } from 'src/user/entities/user.entity';
 

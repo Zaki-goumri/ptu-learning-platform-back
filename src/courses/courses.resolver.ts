@@ -1,36 +1,68 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CoursesService } from './courses.service';
-import { Course } from './types/course.type';
+import { Course } from './types/course.gql';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Injectable } from '@nestjs/common';
 import { CreateCourseInput } from './dtos/requests/create-course';
-import { UpdateCourseDto } from './dtos/requests/update-course';
+import { UpdateCourseInput } from './dtos/requests/update-course';
+import { RemoveCourseResponse } from './types/remove-course.gql';
+import { PaginatedCoursesResponse } from './types/pagination-courses.gql';
 
 @Resolver()
 @SkipThrottle()
 @Injectable()
 export class CoursesResolver {
   constructor(private readonly coursesService: CoursesService) {}
-  @Query(() => Course, { name: 'courses' })
-  getCourses(@Args('id') id: string) {
-    const course = this.coursesService.findOne(id);
-    return course;
+
+  // GET /courses (list all courses)
+  // @Roles('any')
+  @Query(() => PaginatedCoursesResponse, { name: 'courses' })
+  async courses(
+    @Args('page', { type: () => Int, nullable: true }) page?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return await this.coursesService.findMany({ page, limit });
   }
 
-  @Mutation(() => Course)
-  createCourse(@Args('createCourseDto') createCourseDto: CreateCourseInput) {
-    return this.coursesService.create(createCourseDto);
+  // GET /courses/:id (get course by id)
+  // @Roles('any')
+  @Query(() => Course, { name: 'course' })
+  async course(@Args('id') id: string) {
+    return await this.coursesService.findOne(id);
   }
 
+  // POST /courses (teacher/admin)
+  // @Roles('teacher', 'admin')
   @Mutation(() => Course)
+  async createCourse(@Args('createCourseDto') createCourseDto: CreateCourseInput) {
+    return await this.coursesService.create(createCourseDto);
+  }
+
+  // PATCH /courses/:id (teacher/admin)
+  // @Roles('teacher', 'admin')
+  @Mutation(() => Course, { nullable: true })
   async updateCourse(
-    @Args('updateDto') updateCourseDto: UpdateCourseDto,
     @Args('id') id: string,
+    @Args('updateDto') updateCourseDto: UpdateCourseInput,
   ) {
     return await this.coursesService.update(updateCourseDto, id);
   }
-  @Mutation()
-  async remove(@Args('id') id: string) {
-    return this.coursesService.remove(id);
+
+  // DELETE /courses/:id (admin)
+  // @Roles('admin')
+  @Mutation(() => RemoveCourseResponse)
+  async deleteCourse(@Args('id') id: string) {
+    return await this.coursesService.remove(id);
+  }
+
+  // POST /courses/:id/enroll (student)
+  // @Roles('student')
+  @Mutation(() => Course)
+  async enrollInCourse(
+    @Args('id') id: string,
+    @Args('studentId') studentId: string, // adjust if you use current user context
+  ) {
+    return await this.coursesService.enroll(id, studentId);
   }
 }
+

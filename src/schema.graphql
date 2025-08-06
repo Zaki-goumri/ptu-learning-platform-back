@@ -2,16 +2,23 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Course {
+type PaginationMeta {
+  """Total number of items"""
+  total: Int!
+
+  """Current page number"""
+  page: Int!
+
+  """Number of items per page"""
+  limit: Int!
+
+  """Total number of pages"""
+  totalPages: Int!
+}
+
+type Department {
   id: String!
-  title: String!
-  description: String!
-  instrucatorId: String!
-  semesterId: String!
-  departmenetId: String!
-  courseInfoId: String!
-  coverPic: String!
-  isPublished: Boolean!
+  label: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -21,10 +28,104 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type User {
+  id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String!
+  role: UserRole!
+  yearGroup: String
+  departement: Department!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""The role of the user"""
+enum UserRole {
+  """Administrator role"""
+  ADMIN
+
+  """Teacher role"""
+  TEACHER
+
+  """Student role"""
+  STUDENT
+}
+
+type Course {
+  id: String!
+  title: String!
+  description: String!
+  coverImage: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  teacher: User!
+}
+
+type PaginatedCoursesResponse {
+  """Pagination metadata"""
+  meta: PaginationMeta!
+
+  """Array of courses"""
+  data: [Course!]!
+}
+
+type RemoveCourseResponse {
+  """Number of affected rows"""
+  affected: Int
+
+  """Generated identifiers"""
+  generatedMaps: [String!]
+
+  """Raw results"""
+  raw: [String!]
+}
+
 type Query {
-  courses(id: String!): Course!
+  courses(page: Int, limit: Int): PaginatedCoursesResponse!
+  course(id: String!): Course!
 }
 
 type Mutation {
-  createCourse: Course!
+  createCourse(createCourseDto: CreateCourseInput!): Course!
+  updateCourse(id: String!, updateDto: UpdateCourseInput!): Course
+  deleteCourse(id: String!): RemoveCourseResponse!
+  enrollInCourse(id: String!, studentId: String!): Course!
+}
+
+input CreateCourseInput {
+  """The title/name of the course (3-100 characters)"""
+  title: String!
+
+  """
+  Detailed description of the course content and objectives (10-1000 characters)
+  """
+  description: String!
+
+  """URL or path to the course cover image (must be a valid URL)"""
+  coverPage: String!
+
+  """
+  Unique identifier of the teacher/instructor for this course (must be a valid UUID)
+  """
+  teacherId: String!
+}
+
+input UpdateCourseInput {
+  """The title/name of the course (3-100 characters)"""
+  title: String
+
+  """
+  Detailed description of the course content and objectives (10-1000 characters)
+  """
+  description: String
+
+  """URL or path to the course cover image (must be a valid URL)"""
+  coverPage: String
+
+  """
+  Unique identifier of the teacher/instructor for this course (must be a valid UUID)
+  """
+  teacherId: String
 }

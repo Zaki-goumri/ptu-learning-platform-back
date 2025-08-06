@@ -3,13 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
-import {
-  PaginatedResponseDto,
-  PaginationQueryDto,
-} from 'src/common/dtos/pagination.dto';
+import { PaginationQueryDto } from 'src/common/dtos/pagination.dto';
 import { RedisService } from 'src/redis/redis.service';
-import { UpdateCourseDto } from './dtos/requests/update-course';
+import { UpdateCourseInput } from './dtos/requests/update-course';
 import { CreateCourseInput } from './dtos/requests/create-course';
+import { PaginatedCoursesResponse } from './types/pagination-courses.gql';
 
 @Injectable()
 export class CoursesService {
@@ -52,13 +50,27 @@ export class CoursesService {
       take: limit,
       relations: ['user'],
     });
-    return new PaginatedResponseDto<Course>(data, total, page, limit);
+    return new PaginatedCoursesResponse(data, total, page, limit);
   }
   async remove(courseId: string) {
+    await this.redisService.delete(CoursesService.getCourseCacheKey(courseId));
     return await this.courseRepositry.delete({ id: courseId });
   }
 
-  async update(updateCourseDto: UpdateCourseDto, id: string) {
+  /**
+   * Enroll a student in a course (stub).
+   * @param courseId
+   * @param studentId
+   * @returns Course
+   */
+  async enroll(courseId: string, studentId: string) {
+    // TODO: Implement enrollment logic (e.g., add student to participants)
+    const course = await this.findOne(courseId);
+    // Optionally, check if already enrolled, etc.
+    return course;
+  }
+
+  async update(updateCourseDto: UpdateCourseInput, id: string) {
     const { affected } = await this.courseRepositry.update(id, updateCourseDto);
     if (!affected) throw new NotFoundException('course not found');
     const updateCourse = await this.courseRepositry.findOneBy({ id });

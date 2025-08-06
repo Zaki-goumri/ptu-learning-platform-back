@@ -58,7 +58,7 @@ export class Course {
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
   })
-  updatedAt: string;
+  updatedAt: Date;
 
   @ApiProperty({
     description: 'The teacher/instructor assigned to this course',
