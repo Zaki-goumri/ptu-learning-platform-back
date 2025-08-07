@@ -42,7 +42,7 @@ import { RedisService } from 'src/redis/redis.service';
   example: 'internal server error',
 })
 @Controller('notifications')
-//@UseGuards(AccessTokenGuard)
+@UseGuards(AccessTokenGuard)
 export class NotificationsController {
   constructor(
     private readonly notificationsService: NotificationsService,
@@ -87,20 +87,17 @@ export class NotificationsController {
   }
 
   @Sse('/:userId/stream')
-  stream(
-    @Param('userId') userId: string,
-  ): Observable<MessageEvent<INotification>> {
+  stream(@UserExtractor() user: User): Observable<MessageEvent<INotification>> {
     const channel = 'notifications';
 
     return new Observable<MessageEvent<INotification>>((observer) => {
       const onMessage = (message: INotification) => {
-        if (message.userId === userId) {
+        if (message.userId === user.id) {
           observer.next({
             data: message,
           } as MessageEvent<INotification>);
         }
       };
-
       this.redisService
         .subscribe<INotification>(channel, onMessage)
         .then(() => {
@@ -115,7 +112,7 @@ export class NotificationsController {
         });
 
       return () => {
-        console.log(`Client with userId ${userId} disconnected from SSE`);
+        console.log(`Client with userId ${user.id} disconnected from SSE`);
       };
     });
   }

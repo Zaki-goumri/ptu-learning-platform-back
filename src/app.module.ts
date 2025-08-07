@@ -27,6 +27,7 @@ import { CoursesModule } from './courses/courses.module';
 import { HybridThrottlerGuard } from './common/guards/throttler.guard';
 import { HealthModule } from './health/health.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { AttendanceModule } from './attendance/attendance.module';
 
 @Module({
   imports: [
@@ -112,6 +113,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     ChatModule,
     CoursesModule,
     NotificationsModule,
+    AttendanceModule,
   ],
   controllers: [AppController],
   providers: [
