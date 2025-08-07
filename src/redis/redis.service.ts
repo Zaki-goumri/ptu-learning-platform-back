@@ -12,6 +12,8 @@ import { IConfig } from 'src/config/interfaces/config.type';
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly redis: Redis;
+  private readonly subClient: Redis;
+  private readonly pubClient: Redis;
   private readonly logger = new Logger('redis');
   constructor(private readonly configService: ConfigService<IConfig>) {
     const redisUrl = this.configService.get<string>('redis.url', {
@@ -19,15 +21,46 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     });
     if (!redisUrl) throw new Error('Redis URL is not configured');
     this.redis = new Redis(redisUrl);
+    this.subClient = new Redis(redisUrl);
+    this.pubClient = new Redis(redisUrl);
   }
+
   async onModuleInit() {
     await this.redis.ping();
-    this.logger.log('redis is connected');
+    await this.pubClient.ping();
+    await this.subClient.ping();
+    this.logger.log('Redis connections established');
   }
 
   async onModuleDestroy() {
-    await this.redis.quit();
-    this.logger.log('redis is disconnected');
+    await Promise.all([
+      this.redis.quit(),
+      this.pubClient.quit(),
+      this.subClient.quit(),
+    ]);
+    this.logger.log('Redis connections closed');
+  }
+
+  async publish<T>(channel: string, payload: T) {
+    const data = this.defaultSerialize<T>(payload);
+    await this.pubClient.publish(channel, data);
+  }
+
+  async subscribe<T>(channel: string, onMessage: (data) => void) {
+    await this.subClient.subscribe(channel, (err) => {
+      if (err) {
+        this.logger.error(`Failed to subscribe to ${channel}:`, err);
+        return;
+      }
+      this.logger.log(`Subscribed to channel: ${channel}`);
+    });
+
+    this.subClient.on('message', (chan, message) => {
+      if (chan === channel) {
+        const parsed = this.defaultDeserialize<T>(message);
+        onMessage(parsed);
+      }
+    });
   }
 
   async set<T>(key: string, value: T, ttl: number = 3600): Promise<void> {

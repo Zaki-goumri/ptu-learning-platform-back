@@ -2,13 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './entities/course.entity';
 import { Repository } from 'typeorm';
-import { UserService } from 'src/user/user.service';
 import { PaginationQueryDto } from 'src/common/dtos/pagination.dto';
 import { RedisService } from 'src/redis/redis.service';
 import { UpdateCourseInput } from './dtos/requests/update-course';
 import { CreateCourseInput } from './dtos/requests/create-course';
 import { PaginatedCoursesResponse } from './types/pagination-courses.gql';
-import { EnrollmentService } from './enrollement.service';
 
 @Injectable()
 export class CoursesService {
@@ -52,7 +50,8 @@ export class CoursesService {
   }
   async remove(courseId: string) {
     await this.redisService.delete(CoursesService.getCourseCacheKey(courseId));
-    return await this.courseRepositry.delete({ id: courseId });
+    await this.courseRepositry.delete({ id: courseId });
+    return { deleted: false };
   }
 
   async update(updateCourseDto: UpdateCourseInput, id: string) {

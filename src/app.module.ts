@@ -26,6 +26,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CoursesModule } from './courses/courses.module';
 import { HybridThrottlerGuard } from './common/guards/throttler.guard';
 import { HealthModule } from './health/health.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -110,6 +111,7 @@ import { HealthModule } from './health/health.module';
     DepartementModule,
     ChatModule,
     CoursesModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [
