@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Achievement } from './entities/achievement.entity';
-import { UserAchievement, UserAchievementStatus } from './entities/user-achievement.entity';
+import { Achievement } from './entities';
+import { UserAchievement } from './entities';
+import { USER_ACHIEVEMENT_STATUS } from './types/user-achievement-status.type';
 import {
   PaginationQueryDto,
   PaginatedResponseDto,
@@ -59,7 +60,7 @@ export class AchievementsService {
         const userAchievement = new UserAchievement();
         userAchievement.achievement = achievement;
         userAchievement.progress = 0;
-        userAchievement.status = UserAchievementStatus.LOCKED;
+        userAchievement.status = USER_ACHIEVEMENT_STATUS.LOCKED;
         return userAchievement;
       });
 

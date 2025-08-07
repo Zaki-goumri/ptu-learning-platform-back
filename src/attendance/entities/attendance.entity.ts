@@ -10,17 +10,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-export enum AttendanceSession {
-  MORNING = 'morning',
-  AFTERNOON = 'afternoon',
-}
-
-export enum AttendanceStatus {
-  PRESENT = 'present',
-  LATE = 'late',
-  ABSENT = 'absent',
-}
+import { AttendanceSession, ATTENDANCE_SESSION_VALUES } from '../types/attendance-session.type';
+import { AttendanceStatus, ATTENDANCE_STATUS_VALUES } from '../types/attendance-status.type';
 
 @Entity()
 export class Attendance {
@@ -41,23 +32,17 @@ export class Attendance {
   @ApiProperty({
     example: 'morning',
     description: 'The session of the day (morning or afternoon)',
-    enum: AttendanceSession,
+    enum: ATTENDANCE_SESSION_VALUES,
   })
-  @Column({
-    type: 'enum',
-    enum: AttendanceSession,
-  })
+  @Column({ type: 'enum', enum: ATTENDANCE_SESSION_VALUES })
   session: AttendanceSession;
 
   @ApiProperty({
     example: 'present',
     description: 'The attendance status of the student',
-    enum: AttendanceStatus,
+    enum: ATTENDANCE_STATUS_VALUES,
   })
-  @Column({
-    type: 'enum',
-    enum: AttendanceStatus,
-  })
+  @Column({ type: 'enum', enum: ATTENDANCE_STATUS_VALUES })
   status: AttendanceStatus;
 
   @ApiProperty({

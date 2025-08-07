@@ -5,17 +5,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  OneToMany,
 } from 'typeorm';
-import { UserAchievement } from './user-achievement.entity';
-
-export enum AchievementRarity {
-  COMMON = 'common',
-  UNCOMMON = 'uncommon',
-  RARE = 'rare',
-  EPIC = 'epic',
-  LEGENDARY = 'legendary',
-}
+import { AchievementRarity, ACHIEVEMENT_RARITY_VALUES } from '../types/achievement-rarity.type';
 
 @Entity()
 export class Achievement {
@@ -27,36 +18,32 @@ export class Achievement {
   id: string;
 
   @ApiProperty({
-    example: 'First Course Completion',
+    example: 'First Quiz Master',
     description: 'The name of the achievement',
   })
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
   @ApiProperty({
-    example: 'Complete your first course successfully',
-    description: 'Detailed description of the achievement',
+    example: 'Complete your first quiz with a perfect score',
+    description: 'The description of the achievement',
   })
   @Column({ type: 'text' })
   description: string;
 
   @ApiProperty({
-    example: 'common',
+    example: 'rare',
     description: 'The rarity level of the achievement',
-    enum: AchievementRarity,
+    enum: ACHIEVEMENT_RARITY_VALUES,
   })
-  @Column({
-    type: 'enum',
-    enum: AchievementRarity,
-    default: AchievementRarity.COMMON,
-  })
+  @Column({ type: 'enum', enum: ACHIEVEMENT_RARITY_VALUES })
   rarity: AchievementRarity;
 
   @ApiProperty({
     example: 100,
-    description: 'Points awarded for earning this achievement',
+    description: 'The points awarded for this achievement',
   })
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int' })
   points: number;
 
   @ApiProperty({
@@ -76,7 +63,4 @@ export class Achievement {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-
-  @OneToMany(() => UserAchievement, (userAchievement) => userAchievement.achievement)
-  userAchievements: UserAchievement[];
 } 

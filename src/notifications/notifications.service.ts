@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
@@ -8,7 +8,7 @@ import {
   PaginatedResponseDto,
   PaginationQueryDto,
 } from 'src/common/dtos/pagination.dto';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { RedisService } from 'src/redis/redis.service';
 
 export interface INotification {

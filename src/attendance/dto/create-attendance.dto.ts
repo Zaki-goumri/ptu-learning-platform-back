@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsDate, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
-import { AttendanceSession, AttendanceStatus } from '../entities/attendance.entity';
+import { AttendanceSession, ATTENDANCE_SESSION_VALUES } from '../types/attendance-session.type';
+import { AttendanceStatus, ATTENDANCE_STATUS_VALUES } from '../types/attendance-status.type';
 
 export class CreateAttendanceDto {
   @ApiProperty({
@@ -16,34 +17,18 @@ export class CreateAttendanceDto {
   @ApiProperty({
     example: 'morning',
     description: 'The session of the day (morning or afternoon)',
-    enum: AttendanceSession,
+    enum: ATTENDANCE_SESSION_VALUES,
   })
   @IsNotEmpty()
-  @IsEnum(AttendanceSession)
+  @IsEnum(ATTENDANCE_SESSION_VALUES)
   session: AttendanceSession;
 
   @ApiProperty({
     example: 'present',
     description: 'The attendance status of the student',
-    enum: AttendanceStatus,
+    enum: ATTENDANCE_STATUS_VALUES,
   })
   @IsNotEmpty()
-  @IsEnum(AttendanceStatus)
+  @IsEnum(ATTENDANCE_STATUS_VALUES)
   status: AttendanceStatus;
-
-  @ApiProperty({
-    example: '123e4567-e89b-12d3-a456-426614174000',
-    description: 'The ID of the course for which attendance is being recorded',
-  })
-  @IsNotEmpty()
-  @IsUUID()
-  courseId: string;
-
-  @ApiProperty({
-    example: '123e4567-e89b-12d3-a456-426614174001',
-    description: 'The ID of the student whose attendance is being recorded',
-  })
-  @IsNotEmpty()
-  @IsUUID()
-  studentId: string;
 } 

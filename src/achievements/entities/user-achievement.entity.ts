@@ -10,51 +10,42 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-export enum UserAchievementStatus {
-  EARNED = 'earned',
-  IN_PROGRESS = 'in-progress',
-  LOCKED = 'locked',
-}
+import { UserAchievementStatus, USER_ACHIEVEMENT_STATUS_VALUES } from '../types/user-achievement-status.type';
 
 @Entity()
 export class UserAchievement {
   @ApiProperty({
     example: '123e4567-e89b-12d3-a456-426614174000',
-    description: 'Unique identifier for the user achievement record (UUID)',
+    description: 'Unique identifier for the user achievement (UUID)',
   })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @ApiProperty({
     example: 75,
-    description: 'Progress percentage towards earning the achievement (0-100)',
+    description: 'Progress towards earning the achievement (0-100)',
   })
   @Column({ type: 'int', default: 0 })
   progress: number;
 
   @ApiProperty({
-    example: 'in-progress',
+    example: 'earned',
     description: 'The status of the achievement for this user',
-    enum: UserAchievementStatus,
+    enum: USER_ACHIEVEMENT_STATUS_VALUES,
   })
-  @Column({
-    type: 'enum',
-    enum: UserAchievementStatus,
-    default: UserAchievementStatus.LOCKED,
-  })
+  @Column({ type: 'enum', enum: USER_ACHIEVEMENT_STATUS_VALUES, default: 'locked' })
   status: UserAchievementStatus;
 
   @ApiProperty({
     example: '2024-01-15T08:30:00.000Z',
-    description: 'Timestamp when the user achievement record was created',
+    description: 'Timestamp when the user achievement was created',
   })
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
   @ApiProperty({
     example: '2024-02-20T14:45:00.000Z',
-    description: 'Timestamp when the user achievement record was last updated',
+    description: 'Timestamp when the user achievement was last updated',
   })
   @UpdateDateColumn({
     type: 'timestamp',

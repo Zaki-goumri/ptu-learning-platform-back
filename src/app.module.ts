@@ -30,6 +30,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [
@@ -118,6 +119,7 @@ import { ScheduleModule } from './schedule/schedule.module';
     AttendanceModule,
     AchievementsModule,
     ScheduleModule,
+    QuizModule,
   ],
   controllers: [AppController],
   providers: [

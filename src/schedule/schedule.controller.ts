@@ -86,14 +86,18 @@ export class ScheduleController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'update session',
-    description: 'find a session by his id which is passed in Param and update it',
+    description:
+      'find a session by his id which is passed in Param and update it',
   })
   @ApiResponse({
     status: 200,
     description: 'session updated successfully',
     type: Session,
   })
-  @ApiParam({ name: 'id', description: 'id of the session that i wanna update' })
+  @ApiParam({
+    name: 'id',
+    description: 'id of the session that i wanna update',
+  })
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -105,7 +109,8 @@ export class ScheduleController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'delete session',
-    description: 'find a session by his id which is passed in Param and delete it',
+    description:
+      'find a session by his id which is passed in Param and delete it',
   })
   @ApiResponse({
     status: 200,
@@ -113,7 +118,10 @@ export class ScheduleController {
     example: 'session with id ${id} is deleted',
     type: String,
   })
-  @ApiParam({ name: 'id', description: 'id of the session that i wanna delete' })
+  @ApiParam({
+    name: 'id',
+    description: 'id of the session that i wanna delete',
+  })
   @Delete(':id')
   async remove(@Param('id') id: string): Promise<void> {
     return await this.scheduleService.remove(id);
@@ -133,4 +141,5 @@ export class ScheduleController {
   async generateAutomaticSchedule(): Promise<Session[]> {
     return await this.scheduleService.generateAutomaticSchedule();
   }
-} 
+}
+
