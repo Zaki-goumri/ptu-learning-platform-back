@@ -28,6 +28,8 @@ import { HybridThrottlerGuard } from './common/guards/throttler.guard';
 import { HealthModule } from './health/health.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AttendanceModule } from './attendance/attendance.module';
+import { AchievementsModule } from './achievements/achievements.module';
+import { ScheduleModule } from './schedule/schedule.module';
 
 @Module({
   imports: [
@@ -114,6 +116,8 @@ import { AttendanceModule } from './attendance/attendance.module';
     CoursesModule,
     NotificationsModule,
     AttendanceModule,
+    AchievementsModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [

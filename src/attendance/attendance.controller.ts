@@ -8,7 +8,6 @@ import {
   Param,
   Query,
   UseGuards,
-  HttpCode,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -148,6 +147,8 @@ export class AttendanceController {
     return await this.attendanceService.update(id, updateAttendanceDto);
   }
 
+  @Delete(':id')
+  @UseGuards(AccessTokenGuard, RoleGuard)
   @Roles(USER_ROLES.ADMIN, USER_ROLES.TEACHER)
   @ApiBearerAuth()
   @ApiOperation({
@@ -159,7 +160,22 @@ export class AttendanceController {
     description: 'The ID of the attendance record to delete',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Attendance record deleted successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized - invalid or missing token',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - insufficient permissions',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Attendance record not found',
+  })
   async remove(@Param('id') id: string) {
     return await this.attendanceService.remove(id);
   }
