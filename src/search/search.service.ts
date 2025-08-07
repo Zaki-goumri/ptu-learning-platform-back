@@ -22,7 +22,6 @@ export class SearchService implements OnModuleInit {
         throw new InternalServerErrorException();
       });
   }
-  //TODO:add type to the query
   async search<T>(index: string, query: any) {
     {
       try {
@@ -42,11 +41,10 @@ export class SearchService implements OnModuleInit {
     }
   }
 
-  // TODO Fix issues with request/response types
   async index<T extends { id: number }>(index: string, body: T): Promise<any> {
     return this.elasticSearchService.index<T>({
       index: index,
-      body: { ...body, id: undefined }, // Ensure id is not undefined
+      body: { ...body, id: undefined },
       id: String(body.id),
     });
   }
