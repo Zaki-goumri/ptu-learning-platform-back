@@ -1,0 +1,762 @@
+The following is a digest of the repository "ptu-back".
+This digest is designed to be easily parsed by Large Language Models.
+
+--- SUMMARY ---
+Repository: ptu-back
+Files Analyzed: 124
+Total Text Size: 15.46 KB
+Estimated Tokens (text only): ~6,753
+
+--- DIRECTORY STRUCTURE ---
+ptu-back/
+├── src/
+│   ├── auth/
+│   │   ├── decorators/
+│   │   │   ├── role.decorator.ts [binary]
+│   │   │   └── user.decorator.ts [binary]
+│   │   ├── dto/
+│   │   │   ├── requests/
+│   │   │   │   ├── csv-row.dto.ts [binary]
+│   │   │   │   ├── sign-in.dto.ts [binary]
+│   │   │   │   └── sign-up.dto.ts [binary]
+│   │   │   └── response/
+│   │   │       └── auth-response.ts [binary]
+│   │   ├── entities/
+│   │   │   └── auth.entity.ts [binary]
+│   │   ├── guards/
+│   │   │   ├── access-token.guard.ts [binary]
+│   │   │   ├── refresh-token.guard.ts [binary]
+│   │   │   └── role.guard.ts [binary]
+│   │   ├── pipes/
+│   │   │   └── csv-validation.pipe.ts [binary]
+│   │   ├── strategies/
+│   │   │   ├── acess-token.strategy.ts [binary]
+│   │   │   └── refresh-token.strategy.ts [binary]
+│   │   ├── types/
+│   │   │   ├── request-with-user.type.ts [binary]
+│   │   │   └── token-payload.type.ts [binary]
+│   │   ├── auth.controller.spec.ts [binary]
+│   │   ├── auth.controller.ts [binary]
+│   │   ├── auth.module.ts [binary]
+│   │   ├── auth.service.spec.ts [binary]
+│   │   └── auth.service.ts [binary]
+│   ├── chat/
+│   │   ├── dtos/
+│   │   │   ├── conversations/
+│   │   │   │   ├── create-conversation.dto.ts [binary]
+│   │   │   │   └── update-conversatio.dto.ts [binary]
+│   │   │   └── messages/
+│   │   │       ├── create-message.dto.ts [binary]
+│   │   │       └── update-message.dto.ts [binary]
+│   │   ├── entities/
+│   │   │   ├── conversation-member.entity.ts [binary]
+│   │   │   ├── conversation.entity.ts [binary]
+│   │   │   ├── index.ts [binary]
+│   │   │   └── message.entity.ts [binary]
+│   │   ├── guards/
+│   │   │   └── ws-auth.guard.ts [binary]
+│   │   ├── types/
+│   │   │   ├── client.type.ts [binary]
+│   │   │   └── memebe_role.type.ts [binary]
+│   │   ├── chat.controller.ts [binary]
+│   │   ├── chat.gateway.spec.ts [binary]
+│   │   ├── chat.gateway.ts [binary]
+│   │   ├── chat.module.ts [binary]
+│   │   ├── chat.service.spec.ts [binary]
+│   │   ├── chat.service.ts [binary]
+│   │   ├── conversation.controller.ts [binary]
+│   │   ├── conversation.module.ts [binary]
+│   │   ├── conversation.service.spec.ts [binary]
+│   │   └── conversation.service.ts [binary]
+│   ├── common/
+│   │   ├── constants/
+│   │   │   ├── jobs.name.ts [binary]
+│   │   │   ├── logger.name.ts [binary]
+│   │   │   └── queues.name.ts [binary]
+│   │   ├── dtos/
+│   │   │   ├── pagination-gql.dto.ts [binary]
+│   │   │   └── pagination.dto.ts [binary]
+│   │   ├── guards/
+│   │   │   └── throttler.guard.ts [binary]
+│   │   ├── types/
+│   │   │   └── optional.type.ts [binary]
+│   │   └── utils/
+│   │       └── hash.utils.ts [binary]
+│   ├── config/
+│   │   ├── interfaces/
+│   │   │   ├── config.type.ts [binary]
+│   │   │   ├── db.type.ts [binary]
+│   │   │   ├── jwt.type.ts [binary]
+│   │   │   └── redis.interface.ts [binary]
+│   │   └── appConfig.ts [binary]
+│   ├── courses/
+│   │   ├── dtos/
+│   │   │   └── requests/
+│   │   │       ├── create-course.ts [binary]
+│   │   │       └── update-course.ts [binary]
+│   │   ├── entities/
+│   │   │   ├── course.entity.ts [binary]
+│   │   │   └── enrollment.entity.ts [binary]
+│   │   ├── types/
+│   │   │   ├── course.gql.ts [binary]
+│   │   │   ├── enrollement.gql.ts [binary]
+│   │   │   ├── enrollment-status.type.ts [binary]
+│   │   │   ├── paginatio-enrollement.ts [binary]
+│   │   │   ├── pagination-courses.gql.ts [binary]
+│   │   │   └── remove-course.gql.ts [binary]
+│   │   ├── courses.module.ts [binary]
+│   │   ├── courses.resolver.spec.ts [binary]
+│   │   ├── courses.resolver.ts [binary]
+│   │   ├── courses.service.spec.ts [binary]
+│   │   ├── courses.service.ts [binary]
+│   │   ├── enrollement.controller.ts [binary]
+│   │   └── enrollement.service.ts [binary]
+│   ├── departement/
+│   │   ├── dto/
+│   │   │   ├── create-departement.dto.ts [binary]
+│   │   │   └── update-departement.dto.ts [binary]
+│   │   ├── entities/
+│   │   │   └── departement.entity.ts [binary]
+│   │   ├── types/
+│   │   │   └── departement.gql.ts [binary]
+│   │   ├── departement.controller.spec.ts [binary]
+│   │   ├── departement.controller.ts [binary]
+│   │   ├── departement.module.ts [binary]
+│   │   ├── departement.service.spec.ts [binary]
+│   │   └── departement.service.ts [binary]
+│   ├── global/
+│   │   └── interceptors/
+│   │       └── logging.interceptor.ts [binary]
+│   ├── health/
+│   │   ├── health.controller.spec.ts [binary]
+│   │   ├── health.controller.ts [binary]
+│   │   └── health.module.ts [binary]
+│   ├── mail/
+│   │   ├── templates/
+│   │   │   ├── styles/
+│   │   │   │   └── email.styles.ts [binary]
+│   │   │   ├── otp.template.ts [binary]
+│   │   │   └── welcome.template.ts [binary]
+│   │   ├── types/
+│   │   │   └── mail-props.types.ts [binary]
+│   │   ├── mail.service.spec.ts [binary]
+│   │   └── mail.service.ts [binary]
+│   ├── redis/
+│   │   ├── redis.module.ts [binary]
+│   │   ├── redis.service.spec.ts [binary]
+│   │   └── redis.service.ts [binary]
+│   ├── search/
+│   │   ├── search.module.ts [binary]
+│   │   ├── search.service.spec.ts [binary]
+│   │   └── search.service.ts [binary]
+│   ├── user/
+│   │   ├── dto/
+│   │   │   ├── create-user.dto.ts [binary]
+│   │   │   └── update-user.dto.ts [binary]
+│   │   ├── entities/
+│   │   │   └── user.entity.ts [binary]
+│   │   ├── types/
+│   │   │   ├── user-role.type.ts [binary]
+│   │   │   └── user.gql.ts [binary]
+│   │   ├── user.controller.spec.ts [binary]
+│   │   ├── user.controller.ts [binary]
+│   │   ├── user.module.ts [binary]
+│   │   ├── user.service.spec.ts [binary]
+│   │   └── user.service.ts [binary]
+│   ├── worker/
+│   │   ├── event/
+│   │   │   └── mail.queue.event.ts [binary]
+│   │   └── queue/
+│   │       └── mail.queue.ts [binary]
+│   ├── app.controller.spec.ts [binary]
+│   ├── app.controller.ts [binary]
+│   ├── app.module.ts [binary]
+│   ├── app.service.ts [binary]
+│   ├── main.ts [binary]
+│   └── schema.graphql
+├── test/
+│   ├── app.e2e-spec.ts [binary]
+│   └── jest-e2e.json
+├── compose.yaml
+├── eslint.config.mjs
+├── nest-cli.json
+├── package.json
+├── README.Docker.md
+├── README.md
+├── tsconfig.build.json
+└── tsconfig.json
+
+
+--- FILE CONTENTS ---
+============================================================
+FILE: src/schema.graphql
+============================================================
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type PaginationMeta {
+  """Total number of items"""
+  total: Int!
+
+  """Current page number"""
+  page: Int!
+
+  """Number of items per page"""
+  limit: Int!
+
+  """Total number of pages"""
+  totalPages: Int!
+}
+
+type Department {
+  id: String!
+  label: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type User {
+  id: String!
+  email: String!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String!
+  role: UserRole!
+  yearGroup: String
+  departement: Department!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""The role of the user"""
+enum UserRole {
+  """Administrator role"""
+  ADMIN
+
+  """Teacher role"""
+  TEACHER
+
+  """Student role"""
+  STUDENT
+}
+
+type Course {
+  id: String!
+  title: String!
+  description: String!
+  coverImage: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  teacher: User!
+}
+
+type PaginatedCoursesResponse {
+  """Pagination metadata"""
+  meta: PaginationMeta!
+
+  """Array of courses"""
+  data: [Course!]!
+}
+
+type RemoveCourseResponse {
+  """Number of affected rows"""
+  affected: Int
+
+  """Generated identifiers"""
+  generatedMaps: [String!]
+
+  """Raw results"""
+  raw: [String!]
+}
+
+type Enrollment {
+  id: ID!
+  student: User!
+  course: Course!
+  status: EnrollmentStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum EnrollmentStatus {
+  ACCEPTED
+  REJECTED
+  PENDING
+  SUSPENDED
+}
+
+type Query {
+  courses(page: Int, limit: Int): PaginatedCoursesResponse!
+  course(id: String!): Course!
+}
+
+type Mutation {
+  createCourse(createCourseDto: CreateCourseInput!): Course!
+  updateCourse(id: String!, updateDto: UpdateCourseInput!): Course
+  deleteCourse(id: String!): RemoveCourseResponse!
+  enrollInCourse(courseId: String!, studentId: String!): Enrollment!
+}
+
+input CreateCourseInput {
+  """The title/name of the course (3-100 characters)"""
+  title: String!
+
+  """
+  Detailed description of the course content and objectives (10-1000 characters)
+  """
+  description: String!
+
+  """URL or path to the course cover image (must be a valid URL)"""
+  coverPage: String!
+
+  """
+  Unique identifier of the teacher/instructor for this course (must be a valid UUID)
+  """
+  teacherId: String!
+}
+
+input UpdateCourseInput {
+  """The title/name of the course (3-100 characters)"""
+  title: String
+
+  """
+  Detailed description of the course content and objectives (10-1000 characters)
+  """
+  description: String
+
+  """URL or path to the course cover image (must be a valid URL)"""
+  coverPage: String
+
+  """
+  Unique identifier of the teacher/instructor for this course (must be a valid UUID)
+  """
+  teacherId: String
+}
+
+============================================================
+FILE: test/jest-e2e.json
+============================================================
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  }
+}
+
+
+============================================================
+FILE: compose.yaml
+============================================================
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ptu-server
+    ports:
+      - '3000:3000'
+      - '3001:3001'
+    environment:
+      NODE_ENV: development
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: ptu_learning
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: pnpm start:dev
+
+  db:
+    image: postgres:15
+    container_name: ptu-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ptu_learning
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: ptu-redis
+    ports:
+      - '6379:6379'
+
+volumes:
+  pgdata:
+
+
+============================================================
+FILE: eslint.config.mjs
+============================================================
+// @ts-check
+import eslint from '@eslint/js';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+  {
+    ignores: ['eslint.config.mjs'],
+  },
+  eslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
+  eslintPluginPrettierRecommended,
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+      ecmaVersion: 5,
+      sourceType: 'module',
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+  {
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-floating-promises': 'warn',
+      '@typescript-eslint/no-unsafe-argument': 'warn'
+    },
+  },
+);
+
+============================================================
+FILE: nest-cli.json
+============================================================
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true
+  }
+}
+
+
+============================================================
+FILE: package.json
+============================================================
+{
+  "name": "ptu-learning-platform-backend",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "dependencies": {
+    "@apollo/server": "^4.12.2",
+    "@nest-lab/throttler-storage-redis": "^1.1.0",
+    "@nestjs/apollo": "^13.1.0",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.0.1",
+    "@nestjs/elasticsearch": "^11.1.0",
+    "@nestjs/graphql": "^13.1.0",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/mapped-types": "^2.0.5",
+    "@nestjs/passport": "^11.0.5",
+    "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
+    "@nestjs/typeorm": "^11.0.0",
+    "@scalar/nestjs-api-reference": "^0.5.1",
+    "cache-manager": "^7.1.0",
+    "cache-manager-redis-store": "^3.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "csv-parse": "^5.6.0",
+    "csv-parser": "^3.2.0",
+    "express": "^5.1.0",
+    "express-formidable": "^1.2.0",
+    "express-session": "^1.18.1",
+    "glob": "^11.0.2",
+    "ioredis": "^5.6.1",
+    "lodash": "^4.17.21",
+    "nestjs-admin": "^0.4.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.16.0",
+    "reflect-metadata": "^0.2.2",
+    "resend": "^4.6.0",
+    "rxjs": "^7.8.1",
+    "socket.io": "^4.8.1",
+    "swagger-ui-express": "^5.0.1",
+    "typeorm": "^0.3.24"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.18.0",
+    "@nestjs-modules/mailer": "^2.0.2",
+    "@nestjs/axios": "^4.0.1",
+    "@nestjs/bullmq": "^11.0.2",
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/platform-socket.io": "^11.1.5",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/terminus": "^11.0.0",
+    "@nestjs/testing": "^11.0.1",
+    "@nestjs/throttler": "^6.4.0",
+    "@nestjs/websockets": "^11.1.5",
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.10.7",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/cache-manager": "^5.0.0",
+    "@types/cache-manager-redis-store": "^3.0.0",
+    "@types/csv-parse": "^1.2.5",
+    "@types/express": "^5.0.0",
+    "@types/ioredis": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/lodash": "^4.17.17",
+    "@types/multer": "^1.4.13",
+    "@types/node": "^22.10.7",
+    "@types/nodemailer": "^6.4.17",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/pg": "^8.15.2",
+    "@types/supertest": "^6.0.2",
+    "@types/swagger-ui-express": "^4.1.8",
+    "axios": "^1.11.0",
+    "bcryptjs": "^3.0.2",
+    "bullmq": "^5.53.3",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.2",
+    "globals": "^15.14.0",
+    "jest": "^29.7.0",
+    "nodemailer": "^7.0.3",
+    "prettier": "^3.4.2",
+    "source-map-support": "^0.5.21",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-loader": "^9.5.2",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.20.0"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  },
+  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
+}
+
+
+============================================================
+FILE: README.Docker.md
+============================================================
+### Building and running your application
+
+When you're ready, start your application by running:
+`docker compose up --build`.
+
+Your application will be available at http://localhost:3000.
+
+### Deploying your application to the cloud
+
+First, build your image, e.g.: `docker build -t myapp .`.
+If your cloud uses a different CPU architecture than your development
+machine (e.g., you are on a Mac M1 and your cloud provider is amd64),
+you'll want to build the image for that platform, e.g.:
+`docker build --platform=linux/amd64 -t myapp .`.
+
+Then, push it to your registry, e.g. `docker push myregistry.com/myapp`.
+
+Consult Docker's [getting started](https://docs.docker.com/go/get-started-sharing/)
+docs for more detail on building and pushing.
+
+### References
+* [Docker's Node.js guide](https://docs.docker.com/language/nodejs/)
+
+============================================================
+FILE: README.md
+============================================================
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+</p>
+
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
+
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+
+## Description
+
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+
+## Project setup
+
+```bash
+$ pnpm install
+```
+
+## Compile and run the project
+
+```bash
+# development
+$ pnpm run start
+
+# watch mode
+$ pnpm run start:dev
+
+# production mode
+$ pnpm run start:prod
+```
+
+## Run tests
+
+```bash
+# unit tests
+$ pnpm run test
+
+# e2e tests
+$ pnpm run test:e2e
+
+# test coverage
+$ pnpm run test:cov
+```
+
+## Deployment
+
+When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+
+If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+
+```bash
+$ pnpm install -g mau
+$ mau deploy
+```
+
+With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+
+## Resources
+
+Check out a few resources that may come in handy when working with NestJS:
+
+- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
+- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
+- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
+- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
+- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
+- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
+- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
+- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+
+## Support
+
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+
+## Stay in touch
+
+- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
+
+## License
+
+Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# ptu-learning-platform-back
+
+
+============================================================
+FILE: tsconfig.build.json
+============================================================
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+}
+
+
+============================================================
+FILE: tsconfig.json
+============================================================
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2022",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "noFallthroughCasesInSwitch": false,
+    "strict": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
