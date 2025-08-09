@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMessageDto } from './dtos/messages/create-message.dto';
-import { Conversation, ConversationMember, Message } from './entities';
+import { ConversationMember, Message } from './entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -8,6 +8,10 @@ import {
   PaginationQueryDto,
 } from 'src/common/dtos/pagination.dto';
 import { RedisService } from 'src/redis/redis.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { QUEUE_NAME } from 'src/common/constants/queues.name';
+import { JOB_NAME } from 'src/common/constants/jobs.name';
 
 @Injectable()
 export class ChatService {
@@ -15,14 +19,14 @@ export class ChatService {
     @InjectRepository(Message)
     private messageRepositry: Repository<Message>,
     private readonly redisServie: RedisService,
-    @InjectRepository(Conversation)
-    private readonly conversationRepo: Repository<Conversation>,
     @InjectRepository(ConversationMember)
     private readonly conversationMemberRepo: Repository<ConversationMember>,
+    @InjectQueue(QUEUE_NAME.MESSAGE_QUEUE) private readonly queueMessage: Queue,
   ) {}
   async create(createMessageDto: CreateMessageDto) {
     const message = this.messageRepositry.create(createMessageDto);
-    return await this.messageRepositry.save(message);
+    await this.queueMessage.add(JOB_NAME.SAVE_MESSAGE, message);
+    return message;
   }
   private static getMessageListCacheKey(
     conversationId: string,
