@@ -1,31 +1,44 @@
 import { BullModule } from '@nestjs/bullmq';
-import { Global, Module } from '@nestjs/common';
+import { DynamicModule, Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 
 import { SearchService } from './search.service';
+import { QUEUE_NAME } from 'src/common/constants/queues.name';
+
+export interface SearchModuleOptions {
+  queueName?: string;
+}
 
 @Global()
-@Module({
-  imports: [
-    ElasticsearchModule.registerAsync({
-      inject: [ConfigService],
-      imports: [ConfigModule],
-      useFactory: (ConfigService: ConfigService) => ({
-        node: ConfigService.get('elasticSearch.node'),
-        pingTimeout: ConfigService.get('elasticSearch.timeout'),
-        auth: {
-          username: ConfigService.get('elasticSearch.auth.username')!,
-          password: ConfigService.get('elasticSearch.auth.password')!,
-        },
-        tls: {
-          //WARNING:This is not secure for production
-          rejectUnauthorized: false,
-        },
-      }),
-    }),
-  ],
-  providers: [SearchService],
-  exports: [SearchService, ElasticsearchModule, BullModule],
-})
-export class SearchModule {}
+@Module({})
+export class SearchModule {
+  static registerAsync(options?: SearchModuleOptions): DynamicModule {
+    return {
+      module: SearchModule,
+      imports: [
+        ConfigModule,
+        ElasticsearchModule.registerAsync({
+          imports: [ConfigModule],
+          inject: [ConfigService],
+          useFactory: (config: ConfigService) => ({
+            node: config.get<string>('elasticSearch.node'),
+            //pingTimeout: config.get<number>('elasticSearch.timeout') ?? 3000,
+            //auth: {
+            //username: config.get<string>('elasticSearch.auth.username')!,
+            //password: config.get<string>('elasticSearch.auth.password')!,
+            //},
+            tls: {
+              rejectUnauthorized: false,
+            },
+          }),
+        }),
+        BullModule.registerQueue({
+          name: options?.queueName ?? QUEUE_NAME.SEARCH_QUEUE,
+        }),
+      ],
+      providers: [SearchService],
+      exports: [SearchService, ElasticsearchModule, BullModule],
+    };
+  }
+}

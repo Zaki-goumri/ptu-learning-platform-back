@@ -20,5 +20,8 @@ export default (): IConfig => {
     jwt: {
       secret: process.env.JWT_SECRET || '',
     },
+    elasticSearch: {
+      node: process.env.ELASTICSEARCH_NODE!,
+    },
   };
 };

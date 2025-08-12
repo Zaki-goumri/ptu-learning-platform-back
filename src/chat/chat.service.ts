@@ -84,4 +84,12 @@ export class ChatService {
 
     return rooms.map((element) => element.conversationId);
   }
+
+  async getRoomMembers(conversationId: string) {
+    const users = await this.conversationMemberRepo.find({
+      where: { conversationId },
+      select: { userId: true },
+    });
+    return users;
+  }
 }

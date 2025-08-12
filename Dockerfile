@@ -1,3 +1,7 @@
+FROM nginx:latest
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 FROM node:20-alpine
 
 RUN corepack enable

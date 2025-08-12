@@ -8,19 +8,16 @@ import {
   PaginatedResponseDto,
   PaginationQueryDto,
 } from 'src/common/dtos/pagination.dto';
-import { Subject } from 'rxjs';
 import { RedisService } from 'src/redis/redis.service';
 
 export interface INotification {
-  type: string;
+  title: string;
   content: string;
   userId: string;
 }
 
 @Injectable()
 export class NotificationsService {
-  private clients = new Map<string, Subject<MessageEvent<INotification>>>();
-
   async notify(notification: INotification) {
     await this.redisService.publish('notifications', {
       ...notification,

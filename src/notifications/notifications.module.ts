@@ -9,5 +9,6 @@ import { RedisModule } from 'src/redis/redis.module';
   imports: [TypeOrmModule.forFeature([Notification]), RedisModule],
   controllers: [NotificationsController],
   providers: [NotificationsService],
+  exports: [NotificationsService],
 })
 export class NotificationsModule {}

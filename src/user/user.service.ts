@@ -48,7 +48,7 @@ export class UserService {
     return await this.userRepositry.save({
       ...createUser,
       password: hashedPassword,
-      department,
+      departement: department,
     });
   }
 
@@ -60,7 +60,7 @@ export class UserService {
     const [data, total] = await this.userRepositry.findAndCount({
       skip,
       take: limit,
-      relations: ['department'],
+      relations: ['departement'],
       select: { departement: { label: true } },
     });
 
@@ -75,7 +75,7 @@ export class UserService {
 
     const userFound = await this.userRepositry.findOne({
       where: { id },
-      relations: ['department'],
+      relations: ['departement'],
       select: { departement: { label: true } },
     });
     if (!userFound) {
@@ -96,7 +96,7 @@ export class UserService {
 
     const userFound = await this.userRepositry.findOne({
       where: { email },
-      relations: ['department'],
+      relations: ['departement'],
       select: { departement: { label: true } },
     });
     if (!userFound)

@@ -8,6 +8,9 @@ import { RedisModule } from 'src/redis/redis.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Conversation, ConversationMember, Message } from './entities';
 import { ChatController } from './chat.controller';
+import { BullModule } from '@nestjs/bullmq';
+import { QUEUE_NAME } from 'src/common/constants/queues.name';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -15,6 +18,8 @@ import { ChatController } from './chat.controller';
     JwtModule,
     RedisModule,
     TypeOrmModule.forFeature([Message, Conversation, ConversationMember]),
+    NotificationsModule,
+    BullModule.registerQueue({ name: QUEUE_NAME.MESSAGE_QUEUE }),
   ],
   controllers: [ChatController],
   providers: [ChatGateway, ChatService, WsAuthGuard],

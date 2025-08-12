@@ -31,10 +31,12 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { QuizModule } from './quiz/quiz.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
     HealthModule,
+    SearchModule.registerAsync(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       graphiql: true,
@@ -75,7 +77,11 @@ import { QuizModule } from './quiz/quiz.module';
         };
       },
     }),
-    BullModule.registerQueue({ name: QUEUE_NAME.MAIL_QUEUE }),
+    BullModule.registerQueue(
+      { name: QUEUE_NAME.MAIL_QUEUE },
+      { name: QUEUE_NAME.MESSAGE_QUEUE },
+      { name: QUEUE_NAME.SEARCH_QUEUE },
+    ),
     ThrottlerModule.forRoot({
       throttlers: [
         {

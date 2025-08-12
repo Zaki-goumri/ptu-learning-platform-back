@@ -79,7 +79,7 @@ export class NotificationsController {
   @Get('/test')
   async test() {
     const testMessage: INotification = {
-      type: 'NEW_MESSAGE',
+      title: 'NEW_MESSAGE',
       userId: 'user-id-123',
       content: 'You got a message',
     };
