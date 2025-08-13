@@ -32,7 +32,17 @@
     "test:api:courses": "hurl --variables-file hurl/variables.env hurl/courses.hurl",
     "test:api:auth": "hurl --variables-file hurl/variables.env hurl/auth.hurl",
     "test:api:health": "hurl --variables-file hurl/variables.env hurl/healthcheck.hurl",
-    "test:api:shell": "./hurl/run-all-tests.sh"
+    "test:api:shell": "./hurl/run-all-tests.sh",
+    "clinic:doctor": "clinic doctor -- node dist/main",
+    "clinic:bubbleprof": "clinic bubbleprof -- node dist/main",
+    "clinic:flame": "clinic flame -- node dist/main",
+    "clinic:heap": "clinic heapprofiler -- node dist/main",
+    "clinic:doctor:open": " PORT=4000 clinic doctor --open -- node dist/main",
+    "clinic:bubbleprof:open": "clinic bubbleprof --open -- node dist/main",
+    "clinic:flame:open": "clinic flame --open -- node dist/main",
+    "clinic:heap:open": "clinic heapprofiler --open -- node dist/main",
+    "clinic:load": "clinic doctor --on-port 'autocannon -c 10 -d 30 http://localhost:30000' -- node dist/main",
+    "clinic:load:open": "clinic doctor --open --on-port 'autocannon -c 10 -d 30 http://localhost:3000' -- node dist/main"
   },
   "dependencies": {
     "@apollo/server": "^4.12.2",
@@ -54,14 +64,17 @@
     "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "clinic": "^13.0.0",
     "csv-parse": "^5.6.0",
     "csv-parser": "^3.2.0",
+    "elasticdump": "^6.124.1",
     "express": "^5.1.0",
     "express-formidable": "^1.2.0",
     "express-session": "^1.18.1",
     "glob": "^11.0.2",
     "ioredis": "^5.6.1",
     "lodash": "^4.17.21",
+    "nest-winston": "^1.10.2",
     "nestjs-admin": "^0.4.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
@@ -71,7 +84,10 @@
     "rxjs": "^7.8.1",
     "socket.io": "^4.8.1",
     "swagger-ui-express": "^5.0.1",
-    "typeorm": "^0.3.24"
+    "typeorm": "^0.3.24",
+    "winston": "^3.17.0",
+    "winston-logstash": "^1.2.1",
+    "winston-logstash-transport": "^2.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

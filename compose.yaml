@@ -29,7 +29,9 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    command: pnpm start:dev
+    command: pnpm start:prod
+    networks:
+      - elk
 
   db:
     image: postgres:15
@@ -42,12 +44,16 @@ services:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - elk
 
   redis:
     image: redis:7
     container_name: ptu-redis
     ports:
       - '6379:6379'
+    networks:
+      - elk
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
@@ -59,7 +65,11 @@ services:
     ports:
       - '9200:9200'
     healthcheck:
-      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
+      test:
+        [
+          'CMD-SHELL',
+          'curl -fs http://localhost:9200/_cluster/health || exit 1',
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -70,6 +80,36 @@ services:
       memlock:
         soft: -1
         hard: -1
+    networks:
+      - elk
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.14.0
+    container_name: logstash
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - '5044:5044'
+    networks:
+      - elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.14.0
+    container_name: kibana
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - '5601:5601'
+    networks:
+      - elk
 
   nginx:
     image: nginx:latest
@@ -85,3 +125,7 @@ services:
 volumes:
   pgdata:
   esdata:
+
+networks:
+  elk:
+    driver: bridge

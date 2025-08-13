@@ -5,10 +5,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { ValidationPipe } from '@nestjs/common';
 import { LoggerInterceptor } from './global/interceptors/logging.interceptor';
-
+import { LoggerBuilder } from 'src/common/logging/winston.logger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: ['warn', 'error', 'log'],
+    logger:
+      process.env.ENV == 'STAGING' || process.env.ENV == 'PRODUCTION'
+        ? new LoggerBuilder().setJobName('core').build()
+        : ['log', 'error', 'warn', 'debug', 'verbose'],
   });
   app.useGlobalPipes(
     new ValidationPipe({
