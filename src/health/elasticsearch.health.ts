@@ -21,4 +21,3 @@ export class ElasticsearchHealthIndicator extends HealthIndicator {
     }
   }
 }
-

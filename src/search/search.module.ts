@@ -21,17 +21,42 @@ export class SearchModule {
         ElasticsearchModule.registerAsync({
           imports: [ConfigModule],
           inject: [ConfigService],
-          useFactory: (config: ConfigService) => ({
-            node: config.get<string>('elasticSearch.node'),
-            //pingTimeout: config.get<number>('elasticSearch.timeout') ?? 3000,
-            //auth: {
-            //username: config.get<string>('elasticSearch.auth.username')!,
-            //password: config.get<string>('elasticSearch.auth.password')!,
-            //},
-            tls: {
-              rejectUnauthorized: false,
-            },
-          }),
+          useFactory: (config: ConfigService) => {
+            // Get from structured config first, then fallback to direct env var
+            const elasticsearchConfig = config.get('elasticSearch');
+            const node =
+              elasticsearchConfig?.node ||
+              config.get<string>('ELASTICSEARCH_NODE');
+
+            console.log('Elasticsearch Node Configuration:', node); // Debug log
+
+            if (!node) {
+              throw new Error(
+                'Elasticsearch node configuration is missing. Please set ELASTICSEARCH_NODE environment variable or add elasticSearch.node to your config.',
+              );
+            }
+
+            const esConfig = {
+              node: node,
+              pingTimeout: elasticsearchConfig?.timeout ?? 3000,
+              auth: elasticsearchConfig?.auth?.username
+                ? {
+                    username: elasticsearchConfig.auth.username,
+                    password: elasticsearchConfig.auth.password,
+                  }
+                : undefined,
+              tls: {
+                rejectUnauthorized: false,
+              },
+            };
+
+            console.log('Final Elasticsearch Config:', {
+              ...esConfig,
+              auth: esConfig.auth ? '***hidden***' : undefined,
+            }); // Debug log
+
+            return esConfig;
+          },
         }),
         BullModule.registerQueue({
           name: options?.queueName ?? QUEUE_NAME.SEARCH_QUEUE,

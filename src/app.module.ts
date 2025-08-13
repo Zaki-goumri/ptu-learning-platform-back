@@ -36,7 +36,7 @@ import { SearchModule } from './search/search.module';
 @Module({
   imports: [
     HealthModule,
-    //SearchModule.registerAsync(),
+    SearchModule.registerAsync(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       graphiql: true,
