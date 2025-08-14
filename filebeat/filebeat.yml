@@ -1,0 +1,14 @@
+filebeat.inputs:
+  - type: filestream
+    id: microservice
+    fields_under_root: true
+    encoding: utf-8
+    fields:
+      event.database: microservice
+    paths:
+      - /usr/src/app/logs/*.log
+
+setup.kibana:
+  host: 'kibana:5601'
+output.logstash:
+  hosts: 'logstash:5044'

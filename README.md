@@ -91,13 +91,42 @@ pnpm run start:dev
 
 ### Using Docker (Recommended)
 
-```bash
-# Start all services
-docker compose up --build
+This project includes a comprehensive Docker Compose setup that deploys the NestJS application along with a full ELK (Elasticsearch, Logstash, Kibana) stack for centralized logging.
 
-# Run in background
-docker compose up -d --build
+```bash
+# Build and start all services in detached mode
+docker compose up --build -d
 ```
+
+This command will bring up the following services:
+- **`server`**: The NestJS backend application.
+- **`db`**: PostgreSQL database.
+- **`redis`**: Redis for caching and queueing.
+- **`elasticsearch`**: Distributed search and analytics engine (data store for logs).
+- **`logstash`**: Data processing pipeline (receives logs from Filebeat).
+- **`filebeat`**: Lightweight shipper for forwarding logs from the NestJS app to Logstash.
+- **`kibana`**: Data visualization dashboard for Elasticsearch.
+- **`nginx`**: Reverse proxy for the NestJS application.
+
+## 📊 ELK Stack Logging
+
+Logs from the NestJS application are collected and processed by the ELK stack:
+
+1.  **NestJS Application**: Writes logs to `logs/application.log` and `logs/error.log` files within the container using Winston.
+2.  **Filebeat**: Reads these log files from the `logs` directory (mounted as a Docker volume) and forwards them to Logstash.
+3.  **Logstash**: Receives log events from Filebeat, processes them (e.g., adds metadata), and then sends them to Elasticsearch.
+4.  **Elasticsearch**: Stores and indexes the processed log data.
+5.  **Kibana**: Provides a web interface to search, analyze, and visualize the logs stored in Elasticsearch.
+
+### Accessing Kibana
+
+Once all services are up and running, you can access the Kibana dashboard in your browser:
+
+- **Kibana UI**: http://localhost:5601
+
+From Kibana, you can create index patterns (e.g., `nestjs-logs-*`) to explore your application logs.
+
+
 
 ## 📚 API Documentation
 

@@ -1,11 +1,3 @@
-FROM nginx:latest
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-FROM docker.elastic.co/logstash/logstash:8.15.2
-
-COPY logstash.conf /usr/share/logstash/pipeline/logstash.conf
-
 FROM node:20-alpine
 
 RUN corepack enable
@@ -18,7 +10,10 @@ RUN pnpm install --frozen-lockfile --prefer-offline
 
 COPY . .
 
+RUN rm -rf dist
 RUN pnpm build
+
+RUN ls -la dist
 
 EXPOSE 3000
 
