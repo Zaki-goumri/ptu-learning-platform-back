@@ -126,6 +126,14 @@ Once all services are up and running, you can access the Kibana dashboard in you
 
 From Kibana, you can create index patterns (e.g., `nestjs-logs-*`) to explore your application logs.
 
+### Accessing Grafana
+
+Once all services are up and running, you can access the Grafana dashboard in your browser:
+
+- **Grafana UI**: http://localhost:3000
+
+Use `admin` as both username and password to log in.
+
 
 
 ## 📚 API Documentation

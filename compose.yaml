@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: ptu-server
     ports:
-      - '3000:3000'
-      - '3001:3001'
+      - '3001:3000'
+      - '3002:3001'
     environment:
       NODE_ENV: development
       ENV: STAGING
@@ -152,9 +152,25 @@ services:
     networks:
       - elk
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - elasticsearch
+    networks:
+      - elk
+
 volumes:
   pgdata:
   esdata:
+  grafana-data:
 
 networks:
   elk:
