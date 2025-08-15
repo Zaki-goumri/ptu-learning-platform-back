@@ -48,7 +48,6 @@ import { SearchModule } from './search/search.module';
       load: [appConfig],
       isGlobal: true,
       cache: true,
-      envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -114,7 +113,6 @@ import { SearchModule } from './search/search.module';
         const jwtConfig = configService.get<IJwt>('secret');
         return {
           secret: jwtConfig?.secret,
-          signOptions: { expiresIn: '1h' },
         };
       },
     }),

@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from '../../user/user.service';
@@ -30,9 +26,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     });
   }
 
-  async validate(
-    payload: IRefreshTokenPayload,
-  ): Promise<User | NotFoundException> {
+  async validate(payload: IRefreshTokenPayload): Promise<User> {
     if (!payload || !payload.sub) {
       throw new UnauthorizedException('Invalid token payload');
     }

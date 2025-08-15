@@ -8,3 +8,8 @@ export interface ITokenPayload {
 export interface IAcessTokenPayload extends ITokenPayload {}
 
 export interface IRefreshTokenPayload extends ITokenPayload {}
+
+export interface AccessRes {
+  id: string;
+  role: UserRole;
+}

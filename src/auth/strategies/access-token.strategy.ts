@@ -1,14 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserService } from '../../user/user.service';
 import { ConfigService } from '@nestjs/config';
-import { User } from 'src/user/entities/user.entity';
-import { IAcessTokenPayload } from '../types/token-payload.type';
+import { AccessRes, IAcessTokenPayload } from '../types/token-payload.type';
 
 @Injectable()
 export class AcessTokenStrategy extends PassportStrategy(
@@ -30,14 +25,10 @@ export class AcessTokenStrategy extends PassportStrategy(
     });
   }
 
-  async validate(
-    payload: IAcessTokenPayload,
-  ): Promise<User | NotFoundException> {
+  validate(payload: IAcessTokenPayload): AccessRes {
     if (!payload || !payload.sub) {
       throw new UnauthorizedException('Invalid token payload');
     }
-    const user = await this.userService.findById(payload.sub);
-    if (!user) throw new UnauthorizedException('User not found');
-    return user;
+    return { id: payload.sub, ...payload };
   }
 }
