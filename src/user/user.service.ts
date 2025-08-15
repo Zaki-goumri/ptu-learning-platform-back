@@ -40,7 +40,7 @@ export class UserService {
 
   constructor(
     @InjectRepository(User)
-    private userRepositry: Repository<User>,
+    private userRepository: Repository<User>,
     private redisService: RedisService,
     private dataSource: DataSource,
     private departementService: DepartementService,
@@ -63,11 +63,12 @@ export class UserService {
     );
     if (!department) throw new NotFoundException('the department is not found');
     const hashedPassword = await generateHash(createUser.password);
-    const user = await this.userRepositry.save({
+    const user = await this.userRepository.save({
       ...createUser,
       password: hashedPassword,
       departement: department,
     });
+
     const userSearchDto: UserSearchDto = {
       id: user.id,
       email: user.email,
@@ -75,12 +76,14 @@ export class UserService {
       lastName: user.lastName,
       departmentLabel: department.label,
       role: user.role,
+      phoneNumber: user.phoneNumber,
     };
+
     await this.searchQueue.add(SEARCH_JOB_NAME.INDEX_DOCUMENT, {
       index: 'users',
       id: user.id,
       document: userSearchDto,
-    } as IndexDocumentJob<UserSearchDto>);
+    });
     return user;
   }
 
@@ -89,7 +92,7 @@ export class UserService {
   ): Promise<PaginatedResponseDto<User>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-    const [data, total] = await this.userRepositry.findAndCount({
+    const [data, total] = await this.userRepository.findAndCount({
       skip,
       take: limit,
       relations: ['departement'],
@@ -105,7 +108,7 @@ export class UserService {
     );
     if (cachedUser) return cachedUser;
 
-    const userFound = await this.userRepositry.findOne({
+    const userFound = await this.userRepository.findOne({
       where: { id },
       relations: ['departement'],
       select: { departement: { label: true } },
@@ -124,7 +127,7 @@ export class UserService {
     );
     if (cachedUser) return cachedUser;
 
-    const userFound = await this.userRepositry.findOne({
+    const userFound = await this.userRepository.findOne({
       where: { email },
       relations: ['departement'],
       select: { departement: { label: true } },
@@ -147,10 +150,8 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    const updatedUser = await this.userRepositry.save({
-      ...updateUserData,
-      id,
-    });
+    await this.userRepository.update(id, updateUserData);
+    const updatedUser = await this.userRepository.findOne({ where: { id } });
     if (!updatedUser)
       throw new BadRequestException(`User with ID ${id} not updated`);
 
@@ -162,16 +163,23 @@ export class UserService {
       firstName: updatedUser.firstName,
       lastName: updatedUser.lastName,
       role: updatedUser.role,
+      phoneNumber: updatedUser.phoneNumber,
     };
-    if (updatedUser.departement) {
-      userSearchDto.departmentLabel = updatedUser.departement.label;
+
+    if (updateUserData.departmentId) {
+      const department = await this.departementService.findById(
+        updateUserData.departmentId,
+      );
+      if (department) {
+        userSearchDto.departmentLabel = department.label;
+      }
     }
 
     await this.searchQueue.add(SEARCH_JOB_NAME.UPDATE_DOCUMENT, {
       index: 'users',
       id: updatedUser.id,
       document: userSearchDto,
-    } as UpdateDocumentJob<UserSearchDto>);
+    });
 
     return updatedUser;
   }
@@ -341,7 +349,7 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    const deletedUser = await this.userRepositry.delete(id);
+    const deletedUser = await this.userRepository.delete(id);
     if (deletedUser.affected === 0)
       throw new NotFoundException(`User with ID ${id} not found`);
 
@@ -353,9 +361,8 @@ export class UserService {
     await this.searchQueue.add(SEARCH_JOB_NAME.DELETE_DOCUMENT, {
       index: 'users',
       id: id,
-    } as DeleteDocumentJob);
+    });
 
     return 'user deleted';
   }
 }
-

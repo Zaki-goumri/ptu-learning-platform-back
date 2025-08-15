@@ -20,8 +20,7 @@ export class SearchProcessor extends WorkerHost {
         const indexJob = job.data as IndexDocumentJob<any>;
         await this.searchService.indexDocument(
           indexJob.index,
-          indexJob.id,
-          indexJob.document,
+          { id: indexJob.id, ...indexJob.document },
         );
         this.logger.log(`Indexed document ${indexJob.id} in index ${indexJob.index}`);
         break;

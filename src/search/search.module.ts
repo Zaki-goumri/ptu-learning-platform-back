@@ -3,8 +3,11 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ISearch } from 'src/config/interfaces/search.type';
 import { SearchService } from './search.service';
+import { SearchController } from './search.controller';
 
-@Module({})
+@Module({
+  controllers: [SearchController]
+})
 export class SearchModule {
   static registerAsync() {
     return {
