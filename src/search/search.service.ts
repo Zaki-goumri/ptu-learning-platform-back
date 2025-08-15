@@ -5,10 +5,9 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 export class SearchService {
   constructor(private readonly elasticsearchService: ElasticsearchService) {}
 
-  async indexDocument<T>(index: string, id: string, document: T) {
+  async indexDocument<T>(index: string, document: T) {
     return this.elasticsearchService.index<T>({
       index,
-      id,
       document,
     });
   }
@@ -28,7 +27,11 @@ export class SearchService {
     });
   }
 
-  async search<T>(index: string, query: string, fields: string[]): Promise<T[]> {
+  async search<T>(
+    index: string,
+    query: string,
+    fields: string[],
+  ): Promise<T[]> {
     const { hits } = await this.elasticsearchService.search<T>({
       index,
       query: {
@@ -38,6 +41,8 @@ export class SearchService {
         },
       },
     });
-    return hits.hits.map((hit) => hit._source).filter((doc) => doc !== undefined) as T[];
+    return hits.hits
+      .map((hit) => hit._source)
+      .filter((doc) => doc !== undefined) as T[];
   }
 }

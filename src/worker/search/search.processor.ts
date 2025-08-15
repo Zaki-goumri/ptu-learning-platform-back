@@ -18,10 +18,10 @@ export class SearchProcessor extends WorkerHost {
     switch (job.name) {
       case JOB_NAME.INDEX_SEARCH:
         this.logger.log('Indexing data');
-        return this.searchService.index(job.data.index, job.data.body);
+        return this.searchService.indexDocument(job.data.index, job.data.body);
       case JOB_NAME.DELETE_INDEX:
         this.logger.log('Deleting indexed Data');
-        return this.searchService.delete(job.data.index, job.data.body);
+        return this.searchService.deleteDocument(job.data.index, job.data.body);
       default:
         return Promise.resolve();
     }
