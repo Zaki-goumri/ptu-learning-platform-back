@@ -42,17 +42,7 @@ export class DepartementService {
       take: limit,
     });
 
-    const result = {
-      data: departments,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-
-    return result;
+    return new PaginatedResponseDto(departments, total, page, limit);
   }
 
   async findById(id: string): Promise<Department> {

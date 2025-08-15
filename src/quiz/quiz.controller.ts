@@ -37,26 +37,19 @@ import {
   PaginationQueryDto,
   PaginatedResponseDto,
 } from 'src/common/dtos/pagination.dto';
-
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
 /*
  * quiz and grades endpoints
  */
+
 @ApiTags('Quiz & Grades')
 @Controller()
 @UseGuards(AccessTokenGuard, RoleGuard)
 @ApiBearerAuth()
-// common responses
-@ApiTooManyRequestsResponse({
-  description: 'rate limiting to many messages',
-  example: 'ThrottlerException: Too Many Requests',
-})
-@ApiNotFoundResponse({
-  description: 'quiz with id ${id} not found',
-  example: 'quiz with id ${id} not found',
-})
+@ApiTooManyRequestsResponse({ description: SWAGGER_DESC.TOO_MANY_REQUESTS })
+@ApiNotFoundResponse({ description: 'quiz with id ${id} not found' })
 @ApiInternalServerErrorResponse({
-  description: 'internal server error',
-  example: 'internal server error',
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
 })
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
@@ -73,7 +66,9 @@ export class QuizController {
   })
   @ApiParam({ name: 'courseId', description: 'id of the course' })
   @Get('courses/:courseId/quizzes')
-  async findQuizzesByCourse(@Param('courseId') courseId: string): Promise<Quiz[]> {
+  async findQuizzesByCourse(
+    @Param('courseId') courseId: string,
+  ): Promise<Quiz[]> {
     return await this.quizService.findQuizzesByCourse(courseId);
   }
 
@@ -131,7 +126,11 @@ export class QuizController {
     @Body() submitQuizDto: SubmitQuizDto,
     @Request() req: extendedReq,
   ): Promise<Grade> {
-    return await this.quizService.submitQuiz(quizId, req.user.id, submitQuizDto);
+    return await this.quizService.submitQuiz(
+      quizId,
+      req.user.id,
+      submitQuizDto,
+    );
   }
 
   @HttpCode(HttpStatus.OK)
@@ -146,9 +145,7 @@ export class QuizController {
   })
   @Roles(USER_ROLES.STUDENT, USER_ROLES.TEACHER)
   @Get('grades')
-  async findGrades(
-    @Request() req: extendedReq,
-  ): Promise<Grade[]> {
+  async findGrades(@Request() req: extendedReq): Promise<Grade[]> {
     return await this.quizService.findGrades(req.user.id, req.user.role);
   }
 
@@ -162,15 +159,16 @@ export class QuizController {
     description: 'find submissions for grading',
     type: PaginatedResponseDto,
   })
-  @ApiQuery({ name: 'page', description: 'pagination config' })
-  @ApiQuery({ name: 'limit', description: 'pagination config' })
   @Roles(USER_ROLES.TEACHER)
   @Get('submissions/ungraded')
   async findSubmissionsForGrading(
     @Query() paginationQuery: PaginationQueryDto,
     @Request() req: extendedReq,
   ): Promise<PaginatedResponseDto<QuizSubmission>> {
-    return await this.quizService.findSubmissionsForGrading(paginationQuery, req.user.id);
+    return await this.quizService.findSubmissionsForGrading(
+      paginationQuery,
+      req.user.id,
+    );
   }
 
   @HttpCode(HttpStatus.OK)
@@ -183,7 +181,10 @@ export class QuizController {
     description: 'find submission by id',
     type: QuizSubmission,
   })
-  @ApiParam({ name: 'id', description: 'id of the submission that i wanna find' })
+  @ApiParam({
+    name: 'id',
+    description: 'id of the submission that i wanna find',
+  })
   @Roles(USER_ROLES.TEACHER)
   @Get('submissions/:id')
   async findSubmissionById(
@@ -211,7 +212,11 @@ export class QuizController {
     @Body() gradeSubmissionDto: GradeSubmissionDto,
     @Request() req: extendedReq,
   ): Promise<QuizSubmission> {
-    return await this.quizService.gradeSubmission(id, req.user.id, gradeSubmissionDto);
+    return await this.quizService.gradeSubmission(
+      id,
+      req.user.id,
+      gradeSubmissionDto,
+    );
   }
 
   @HttpCode(HttpStatus.OK)
@@ -226,11 +231,11 @@ export class QuizController {
   })
   @ApiParam({ name: 'id', description: 'id of the submission to get grade' })
   @Roles(USER_ROLES.STUDENT)
-  @Get('submissions/:id/grade')
+  @Get('submissions/:id/view-grade')
   async getSubmissionGrade(
     @Param('id') id: string,
     @Request() req: extendedReq,
   ): Promise<QuizSubmission> {
     return await this.quizService.getSubmissionGrade(id, req.user.id);
   }
-} 
+}

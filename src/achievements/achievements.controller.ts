@@ -1,14 +1,11 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiTooManyRequestsResponse,
+  ApiInternalServerErrorResponse,
   ApiQuery,
 } from '@nestjs/swagger';
 import { AchievementsService } from './achievements.service';
@@ -18,28 +15,23 @@ import {
   PaginationQueryDto,
   PaginatedResponseDto,
 } from 'src/common/dtos/pagination.dto';
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
 
 @ApiTags('Achievements')
 @Controller('achievements')
+@ApiTooManyRequestsResponse({ description: SWAGGER_DESC.TOO_MANY_REQUESTS })
+@ApiInternalServerErrorResponse({
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
+})
 export class AchievementsController {
   constructor(private readonly achievementsService: AchievementsService) {}
 
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
   @Get()
   @ApiOperation({
     summary: 'Get all achievements',
     description: 'Retrieve paginated achievements in the system',
-  })
-  @ApiQuery({
-    name: 'page',
-    description: 'Page number for pagination',
-    required: false,
-    example: 1,
-  })
-  @ApiQuery({
-    name: 'limit',
-    description: 'Number of items per page',
-    required: false,
-    example: 10,
   })
   @ApiResponse({
     status: 200,
@@ -56,6 +48,8 @@ export class AchievementsController {
     return await this.achievementsService.findAll(paginationQuery);
   }
 
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
   @Get('users/:id')
   @ApiOperation({
     summary: 'Get user achievements',
@@ -65,18 +59,6 @@ export class AchievementsController {
     name: 'id',
     description: 'The ID of the user',
     example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiQuery({
-    name: 'page',
-    description: 'Page number for pagination',
-    required: false,
-    example: 1,
-  })
-  @ApiQuery({
-    name: 'limit',
-    description: 'Number of items per page',
-    required: false,
-    example: 10,
   })
   @ApiResponse({
     status: 200,
@@ -95,6 +77,10 @@ export class AchievementsController {
     @Param('id') userId: string,
     @Query() paginationQuery: PaginationQueryDto,
   ): Promise<PaginatedResponseDto<UserAchievement>> {
-    return await this.achievementsService.findUserAchievements(userId, paginationQuery);
+    return await this.achievementsService.findUserAchievements(
+      userId,
+      paginationQuery,
+    );
   }
-} 
+}
+

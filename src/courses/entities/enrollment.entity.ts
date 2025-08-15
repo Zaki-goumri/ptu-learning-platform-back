@@ -24,7 +24,7 @@ export class Enrollment {
   })
   id: string;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
   @ApiProperty({
     example: '123e4567-e89b-12d3-a456-426614174000',
@@ -32,8 +32,8 @@ export class Enrollment {
   })
   student: User;
 
-  @ManyToOne(() => Course, { eager: true })
-  @JoinColumn({ name: 'couserId' })
+  @ManyToOne(() => Course)
+  @JoinColumn({ name: 'courseId' })
   @ApiProperty({
     example: '123e4567-e89b-12d3-a456-426614174000',
     description: 'The course that the user enrolled in',

@@ -1,59 +1,43 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 @Injectable()
-export class SearchService implements OnModuleInit {
-  logger = new Logger('SearchService');
-  constructor(private readonly elasticSearchService: ElasticsearchService) {}
-  onModuleInit() {
-    this.elasticSearchService
-      .ping()
-      .then(() => {
-        this.logger.log('Elasticsearch is up and running');
-      })
-      .catch((e) => {
-        this.logger.error('Elasticsearch is down');
-        this.logger.error(e);
-        throw new InternalServerErrorException();
-      });
-  }
-  async search<T>(index: string, query: any) {
-    {
-      try {
-        const res = await this.elasticSearchService.search<T>({
-          body: {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            query: query,
-          },
+export class SearchService {
+  constructor(private readonly elasticsearchService: ElasticsearchService) {}
 
-          index: index,
-        });
-        return res.hits.hits.map((hit) => hit._source);
-      } catch (error) {
-        this.logger.error(error);
-        throw new InternalServerErrorException();
-      }
-    }
-  }
-
-  async index<T extends { id: number }>(index: string, body: T): Promise<any> {
-    return this.elasticSearchService.index<T>({
-      index: index,
-      body: { ...body, id: undefined },
-      id: String(body.id),
+  async indexDocument<T>(index: string, id: string, document: T) {
+    return this.elasticsearchService.index<T>({
+      index,
+      id,
+      document,
     });
   }
 
-  async delete(index: string, query: any) {
-    await this.elasticSearchService.deleteByQuery({
-      index: index,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      body: { query },
+  async updateDocument<T>(index: string, id: string, document: Partial<T>) {
+    return this.elasticsearchService.update<T>({
+      index,
+      id,
+      doc: document,
     });
+  }
+
+  async deleteDocument(index: string, id: string) {
+    return this.elasticsearchService.delete({
+      index,
+      id,
+    });
+  }
+
+  async search<T>(index: string, query: string, fields: string[]): Promise<T[]> {
+    const { hits } = await this.elasticsearchService.search<T>({
+      index,
+      query: {
+        multi_match: {
+          query,
+          fields,
+        },
+      },
+    });
+    return hits.hits.map((hit) => hit._source).filter((doc) => doc !== undefined) as T[];
   }
 }

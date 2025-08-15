@@ -27,27 +27,20 @@ import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { USER_ROLES } from 'src/user/types/user-role.type';
-
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
 /*
  * schedule crud endpoints
  */
-@ApiTags('Schedule')
+
 @Controller('schedules')
 @UseGuards(AccessTokenGuard, RoleGuard)
 @Roles(USER_ROLES.ADMIN)
 @ApiBearerAuth()
 // common responses
-@ApiTooManyRequestsResponse({
-  description: 'rate limiting to many messages',
-  example: 'ThrottlerException: Too Many Requests',
-})
-@ApiNotFoundResponse({
-  description: 'session with id ${id} not found',
-  example: 'session with id ${id} not found',
-})
+@ApiTooManyRequestsResponse({ description: SWAGGER_DESC.TOO_MANY_REQUESTS })
+@ApiNotFoundResponse({ description: 'session with id ${id} not found' })
 @ApiInternalServerErrorResponse({
-  description: 'internal server error',
-  example: 'internal server error',
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
 })
 export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
@@ -142,4 +135,3 @@ export class ScheduleController {
     return await this.scheduleService.generateAutomaticSchedule();
   }
 }
-

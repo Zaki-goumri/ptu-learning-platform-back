@@ -6,17 +6,26 @@ import { AcessTokenStrategy } from './strategies/access-token.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
-import { BullModule } from '@nestjs/bullmq';
 import { RedisModule } from 'src/redis/redis.module';
-import { QUEUE_NAME } from 'src/common/constants/queues.name';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+import { IJwt } from 'src/config/interfaces/jwt.type';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
-    JwtModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const jwtConfig = configService.get<IJwt>('secret');
+        return {
+          secret: jwtConfig?.secret,
+        };
+      },
+    }),
     RedisModule,
-    BullModule.registerQueue({ name: QUEUE_NAME.MAIL_QUEUE }),
   ],
   controllers: [AuthController],
   providers: [AuthService, AcessTokenStrategy, RefreshTokenStrategy],

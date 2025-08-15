@@ -15,7 +15,6 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 
 @Resolver()
 @UseGuards(AccessTokenGuard, RoleGuard)
-@Injectable()
 export class CoursesResolver {
   constructor(
     private readonly coursesService: CoursesService,
@@ -23,7 +22,6 @@ export class CoursesResolver {
   ) {}
 
   // GET /courses (list all courses)
-
   @Query(() => PaginatedCoursesResponse, { name: 'courses' })
   async courses(
     @Args('page', { type: () => Int, nullable: true }) page?: number,

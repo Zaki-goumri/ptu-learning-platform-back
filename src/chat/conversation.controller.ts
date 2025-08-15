@@ -24,22 +24,19 @@ import {
   ApiTooManyRequestsResponse,
   ApiInternalServerErrorResponse,
   ApiUnauthorizedResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AccessTokenGuard } from 'src/auth/guards/access-token.guard';
 import { User } from 'src/auth/decorators/user.decorator';
 import { User as UserEntity } from 'src/user/entities/user.entity';
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
 
-@ApiTooManyRequestsResponse({
-  description: 'rate limiting to many messges',
-  example: 'ThrottlerException: Too Many Requests',
-})
+@ApiTooManyRequestsResponse({ description: SWAGGER_DESC.TOO_MANY_REQUESTS })
 @ApiInternalServerErrorResponse({
-  description: 'internal server error',
-  example: 'internal server error',
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
 })
 @ApiUnauthorizedResponse({
   description: 'Unauthorized user or Unauthorized role to do this action ',
-  example: 'Role STUDENT is not authorized for this action',
 })
 @ApiBearerAuth()
 @UseGuards(AccessTokenGuard)
@@ -60,6 +57,8 @@ export class ConversationController {
     return this.conversationService.create(createConversationDto, creator.id);
   }
 
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
   @Get()
   @ApiOperation({ summary: 'Get a paginated list of conversations' })
   @ApiResponse({ status: 200, description: 'Return a list of conversations.' })

@@ -24,8 +24,9 @@ export class EnrollmentService {
     return await this.enrollementRepo.update({ id: enrollmentId }, { status });
   }
   async findOne(id: string) {
-    const enrollment = await this.enrollementRepo.find({
+    const enrollment = await this.enrollementRepo.findOne({
       where: { id },
+      relations: ['student', 'course'],
     });
     if (!enrollment) throw new NotFoundException('enrollment not found');
     return enrollment;
@@ -35,13 +36,15 @@ export class EnrollmentService {
     const [data, total] = await this.enrollementRepo.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
+      relations: ['student', 'course'],
     });
     return new PaginatedEnorllementResponse(data, total, page, limit);
   }
-  async remove(enrollmentId: string) {
-    const removedEnrollement = await this.enrollementRepo.delete({
-      id: enrollmentId,
-    });
-    return removedEnrollement;
+  async remove(enrollmentId: string): Promise<boolean> {
+    const result = await this.enrollementRepo.delete({ id: enrollmentId });
+    if (result.affected === 0) {
+      throw new NotFoundException(`Enrollment with ID ${enrollmentId} not found`);
+    }
+    return true;
   }
 }

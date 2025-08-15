@@ -16,27 +16,29 @@ import {
   ApiParam,
   ApiNotFoundResponse,
   ApiQuery,
+  ApiNoContentResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
+import { PaginationQueryDto } from 'src/common/dtos/pagination.dto';
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
+
 /*
  * user crud endpoints
  */
-@Controller('user')
 // common responses
+
+@Controller('user')
 @ApiTooManyRequestsResponse({
-  description: 'rate limiting to many messges',
-  example: 'ThrottlerException: Too Many Requests',
+  description: SWAGGER_DESC.TOO_MANY_REQUESTS,
 })
 @ApiNotFoundResponse({
-  description: 'user with id ${id} not found',
-  example: 'user with id ${id} not found',
+  description: SWAGGER_DESC.NOT_FOUND,
 })
 @ApiInternalServerErrorResponse({
-  description: 'internal server error',
-  example: 'internal server error',
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
 })
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -50,11 +52,13 @@ export class UserController {
     description: 'find users by pagination',
     type: [User],
   })
-  @ApiQuery({ name: 'page', description: 'pagination config' })
-  @ApiQuery({ name: 'limit', description: 'pagination config' })
+  @ApiQuery({
+    name: 'pageination dto',
+    type: PaginationQueryDto,
+  })
   @Get()
-  findByPagination(@Query('page') page: number, @Query('limit') limit: number) {
-    return this.userService.findByPagination(page, limit);
+  async findByPagination(@Query() paginationDto: PaginationQueryDto) {
+    return await this.userService.findByPagination(paginationDto);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -68,8 +72,8 @@ export class UserController {
   })
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
   @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.userService.findById(id);
+  async findById(@Param('id') id: string) {
+    return await this.userService.findById(id);
   }
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -83,24 +87,23 @@ export class UserController {
   })
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.userService.update(id, updateUserDto);
   }
 
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'delete user',
     description:
       'find a user by his id which is passed in Param and delete it ',
   })
-  @ApiOkResponse({
+  @ApiNoContentResponse({
     description: 'find user by id and delete it ',
     example: 'user with id ${id} is deleted',
-    type: String,
   })
   @ApiParam({ name: 'id', description: 'id of the user that i wanna find ' })
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.userService.delete(id);
+  async delete(@Param('id') id: string) {
+    await this.userService.delete(id);
   }
 }

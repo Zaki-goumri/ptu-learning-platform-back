@@ -18,10 +18,22 @@ import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { RoleGuard } from '../auth/guards/role.guard';
 import { Roles } from '../auth/decorators/role.decorator';
 import { USER_ROLES } from '../user/types/user-role.type';
-import { ApiOperation, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiOkResponse,
+  ApiTooManyRequestsResponse,
+  ApiInternalServerErrorResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { PaginationQueryDto } from 'src/common/dtos/pagination.dto';
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
 
 @Controller('departement')
+@ApiTooManyRequestsResponse({ description: SWAGGER_DESC.TOO_MANY_REQUESTS })
+@ApiInternalServerErrorResponse({
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
+})
 export class DepartementController {
   constructor(private readonly departementService: DepartementService) {}
 
@@ -35,6 +47,8 @@ export class DepartementController {
     return await this.departementService.create(createDepartementDto);
   }
 
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
   @Get()
   @UseGuards(AccessTokenGuard)
   @ApiOperation({ summary: 'Get all departments with pagination' })

@@ -15,6 +15,8 @@ import {
   ApiParam,
   ApiQuery,
   ApiBearerAuth,
+  ApiTooManyRequestsResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
 import { AttendanceService } from './attendance.service';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
@@ -29,11 +31,19 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { USER_ROLES } from 'src/user/types/user-role.type';
 
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
+
 @UseGuards(AccessTokenGuard, RoleGuard)
 @Controller('attendance')
+@ApiTooManyRequestsResponse({ description: SWAGGER_DESC.TOO_MANY_REQUESTS })
+@ApiInternalServerErrorResponse({
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
+})
 export class AttendanceController {
   constructor(private readonly attendanceService: AttendanceService) {}
 
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
   @Get('course/:courseId')
   @ApiOperation({
     summary: 'Get attendance records for a specific course',
@@ -43,18 +53,6 @@ export class AttendanceController {
     name: 'courseId',
     description: 'The ID of the course',
     example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @ApiQuery({
-    name: 'page',
-    description: 'Page number for pagination',
-    required: false,
-    example: 1,
-  })
-  @ApiQuery({
-    name: 'limit',
-    description: 'Number of items per page',
-    required: false,
-    example: 10,
   })
   @ApiResponse({
     status: 200,

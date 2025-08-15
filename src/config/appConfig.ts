@@ -1,14 +1,18 @@
 import { IConfig } from './interfaces/config.type';
 export default (): IConfig => {
   return {
+    app: {
+      port: parseInt(process.env.PORT ?? '3000'),
+      env: process.env.ENV || 'development',
+    },
     db: {
       type: 'postgres' as const,
-      host: process.env.DB_HOST || '',
-      port: parseInt(process.env.DB_PORT || '5432'),
-      username: process.env.DB_USERNAME || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'postgres',
-      synchronize: process.env.NODE_ENV !== 'production',
+      host: process.env.DB_HOST! || '',
+      port: parseInt(process.env.DB_PORT! || '5432'),
+      username: process.env.DB_USERNAME! || 'postgres',
+      password: process.env.DB_PASSWORD! || 'postgres',
+      database: process.env.DB_NAME! || 'postgres',
+      synchronize: process.env.NODE_ENV! !== 'production',
       logging: process.env.NODE_ENV === 'development',
       logger: 'advanced-console',
     },

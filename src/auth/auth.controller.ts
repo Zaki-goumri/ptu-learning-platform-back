@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   ParseFilePipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SigninDto } from './dto/requests/sign-in.dto';
@@ -33,24 +34,16 @@ import { CsvValidationPipe } from './pipes/csv-validation.pipe';
 import { User as UserExtractor } from './decorators/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
-import { Throttle } from '@nestjs/throttler';
+import { BulkSignupDto } from './dto/requests/bulk-signup.dto';
 
-@ApiTooManyRequestsResponse({
-  description: 'rate limiting to many messges',
-  example: 'ThrottlerException: Too Many Requests',
-})
-@ApiNotFoundResponse({
-  description: 'user with id ${id} not found',
-  example: 'user with id ${id} not found',
-})
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
+
+@ApiTooManyRequestsResponse({ description: SWAGGER_DESC.TOO_MANY_REQUESTS })
+@ApiNotFoundResponse({ description: SWAGGER_DESC.NOT_FOUND })
 @ApiInternalServerErrorResponse({
-  description: 'internal server error',
-  example: 'internal server error',
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
 })
-@ApiUnauthorizedResponse({
-  description: 'Unauthorized user or Unauthorized role to do this action ',
-  example: 'Role STUDENT is not authorized for this action',
-})
+@ApiUnauthorizedResponse({ description: SWAGGER_DESC.UNAUTHORIZED })
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -98,7 +91,7 @@ export class AuthController {
           callback(null, true);
         } else {
           callback(
-            new Error('Invalid file type. Only CSV files are allowed.'),
+            new BadRequestException('Invalid file type. Only CSV files are allowed.'),
             false,
           );
         }
@@ -114,14 +107,12 @@ export class AuthController {
       }),
     )
     file: Express.Multer.File,
-    @Query('skip-duplicates') skipDuplicates: boolean,
-    @Query('welcome-email') welcomeEmail: boolean,
-    @Query('temporary-password') tempPassword: boolean,
+    @Query() bulkSignupDto: BulkSignupDto,
   ) {
     return this.authService.bulkSignup(file, {
-      skipDuplicates,
-      tempPassword,
-      welcomeEmail,
+      skipDuplicates: bulkSignupDto.skipDuplicates ?? false,
+      tempPassword: bulkSignupDto.temporaryPassword ?? false,
+      welcomeEmail: bulkSignupDto.welcomeEmail ?? false,
     });
   }
   @UseGuards(RefreshTokenGuard)
@@ -131,7 +122,7 @@ export class AuthController {
   }
 
   @Post('/forget-password')
-  async fotgetPassword(@Body() { email }: { email: string }) {
+  async forgetPassword(@Body() { email }: { email: string }) {
     return await this.authService.generateOtp(email);
   }
   @UseGuards(AccessTokenGuard)

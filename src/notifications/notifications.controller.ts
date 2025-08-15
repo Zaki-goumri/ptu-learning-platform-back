@@ -27,19 +27,13 @@ import { User as UserExtractor } from 'src/auth/decorators/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { Observable } from 'rxjs';
 import { RedisService } from 'src/redis/redis.service';
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
 
 @ApiTags('notifications')
-@ApiTooManyRequestsResponse({
-  description: 'Rate limiting: Too Many Requests',
-  example: 'ThrottlerException: Too Many Requests',
-})
-@ApiNotFoundResponse({
-  description: 'Notification not found',
-  example: 'Notification with id ${id} not found',
-})
+@ApiTooManyRequestsResponse({ description: SWAGGER_DESC.TOO_MANY_REQUESTS })
+@ApiNotFoundResponse({ description: 'Notification not found' })
 @ApiInternalServerErrorResponse({
-  description: 'Internal server error',
-  example: 'internal server error',
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
 })
 @Controller('notifications')
 @UseGuards(AccessTokenGuard)

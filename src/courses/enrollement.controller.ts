@@ -20,9 +20,12 @@ import {
 import { EnrollmentService } from './enrollement.service';
 import { PaginationQueryDto } from 'src/common/dtos/pagination.dto';
 import { EnrollmentStatus } from './types/enrollment-status.type';
+import { SWAGGER_DESC } from 'src/common/constants/swagger.constants';
 
 @ApiNotFoundResponse({ description: 'Enrollment not found' })
-@ApiInternalServerErrorResponse({ description: 'Internal server error' })
+@ApiInternalServerErrorResponse({
+  description: SWAGGER_DESC.INTERNAL_SERVER_ERROR,
+})
 @Controller('enrollments')
 export class EnrollmentController {
   constructor(private readonly enrollmentService: EnrollmentService) {}
@@ -60,16 +63,8 @@ export class EnrollmentController {
     description: 'List enrollments with pagination.',
   })
   @ApiOkResponse({ description: 'Enrollments listed successfully.' })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    description: 'Page number for pagination.',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    description: 'Number of items per page.',
-  })
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
   @Get()
   async findMany(@Query() paginationDto: PaginationQueryDto) {
     return this.enrollmentService.findMany(paginationDto);

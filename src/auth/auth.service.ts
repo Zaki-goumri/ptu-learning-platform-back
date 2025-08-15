@@ -1,3 +1,4 @@
+import { generateRandomCode } from 'src/common/utils/string.utils';
 import {
   Injectable,
   NotFoundException,
@@ -16,17 +17,16 @@ import { omit } from 'lodash';
 import { compareHash, generateHash } from 'src/common/utils/hash.utils';
 import { SignupDto } from './dto/requests/sign-up.dto';
 import { AuthDto } from './dto/response/auth-response';
-import csv from 'csv-parser';
-import { Readable } from 'stream';
-import { Optional } from 'src/common/types/optional.type';
-import { LOGGER } from 'src/common/constants/logger.name';
+import { CsvParserService } from 'src/common/services/csv-parser.service';
 import { User } from 'src/user/entities/user.entity';
 import { RedisService } from 'src/redis/redis.service';
-import { minutes } from '@nestjs/throttler';
+import { minutes, Throttle } from '@nestjs/throttler';
 import { QUEUE_NAME } from 'src/common/constants/queues.name';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { JOB_NAME } from 'src/common/constants/jobs.name';
+import { LOGGER } from 'src/common/constants/logger.name';
+import { Optional } from 'src/common/types/optional.type';
 
 @Injectable()
 export class AuthService {
@@ -40,6 +40,7 @@ export class AuthService {
     private userService: UserService,
     private configService: ConfigService,
     private redisService: RedisService,
+    private csvParserService: CsvParserService,
     @InjectQueue(QUEUE_NAME.MAIL_QUEUE) private readonly mailQueue: Queue,
   ) {}
   async signin(signinDto: SigninDto): Promise<AuthDto> {
@@ -59,11 +60,11 @@ export class AuthService {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.sign(accessTokenPayload, {
         secret: jwtConfig?.secret,
-        expiresIn: '15m',
+        expiresIn: '1h',
       }),
       this.jwtService.sign(refreshTokenPayload, {
         secret: jwtConfig?.secret,
-        expiresIn: '1d',
+        expiresIn: '7d',
       }),
     ]);
     return {
@@ -132,29 +133,11 @@ export class AuthService {
     },
   ) {
     const stringified = file.buffer.toString('utf-8');
-    const parsed: unknown = await this.parseCsv(stringified);
+    const parsed: unknown = await this.csvParserService.parseCsv(stringified);
     return this.userService.bulkCreate(
       parsed as Optional<SignupDto, 'password'>[],
       options,
     );
-  }
-  private async parseCsv(csvString: string) {
-    return new Promise((resolve, reject) => {
-      try {
-        const results: Record<string, string>[] = [];
-        Readable.from(csvString)
-          .pipe(csv())
-          .on('data', (data: Record<string, string>) => {
-            results.push(data);
-          })
-          .on('end', () => {
-            resolve(results);
-          });
-      } catch (error: unknown) {
-        console.error('Error parsing CSV file:', error);
-        reject(new Error('Error parsing CSV file'));
-      }
-    });
   }
 
   async refresh(payload: User) {
@@ -180,10 +163,11 @@ export class AuthService {
       refreshToken,
     };
   }
+  @Throttle({ default: { limit: 3, ttl: minutes(1) } })
   async generateOtp(email: string) {
     const user = await this.userService.findOneByEmail(email);
-    if (!user) new NotFoundException('this email is not found ');
-    const otp = this.getRandomOtp();
+    if (!user) throw new NotFoundException('this email is not found ');
+    const otp = generateRandomCode(6, '0123456789');
     await this.redisService.set<string>(
       AuthService.getOtpKey(user.id),
       otp,
@@ -193,20 +177,12 @@ export class AuthService {
     return 'otp is sent';
   }
 
+  @Throttle({ default: { limit: 3, ttl: minutes(1) } })
   async validateOtp(sentOtp: string, userId: string) {
     const cachedOtp = await this.redisService.get<string>(
       AuthService.getOtpKey(userId),
     );
     if (!cachedOtp) throw new NotFoundException('otp is expired ');
     return cachedOtp === sentOtp;
-  }
-
-  private getRandomOtp(length = 6) {
-    const chars = '0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
   }
 }

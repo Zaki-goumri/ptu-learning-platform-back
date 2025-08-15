@@ -5,19 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import appConfig from './config/appConfig';
 import { Idb } from './config/interfaces/db.type';
-import { DataSource } from 'typeorm';
 import { UserModule } from './user/user.module';
 import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
-import { IJwt } from './config/interfaces/jwt.type';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { BullModule } from '@nestjs/bullmq';
 import { IRedis } from './config/interfaces/redis.interface';
-import { QUEUE_NAME } from './common/constants/queues.name';
-import { MailQueue } from './worker/queue/mail.queue';
-import { MailQueueEventListener } from './worker/event/mail.queue.event';
-import { MailService } from './mail/mail.service';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { ChatModule } from './chat/chat.module';
 import { DepartementModule } from './departement/departement.module';
@@ -33,6 +26,8 @@ import { ScheduleModule } from './schedule/schedule.module';
 import { QuizModule } from './quiz/quiz.module';
 import { SearchModule } from './search/search.module';
 
+import { WorkerModule } from './worker/worker.module';
+
 @Module({
   imports: [
     HealthModule,
@@ -41,6 +36,7 @@ import { SearchModule } from './search/search.module';
       driver: ApolloDriver,
       graphiql: true,
       autoSchemaFile: 'src/schema.graphql',
+      /*eslint-disable*/
       context: ({ req, resp }) => ({ req, resp }),
     }),
     UserModule,
@@ -76,11 +72,6 @@ import { SearchModule } from './search/search.module';
         };
       },
     }),
-    BullModule.registerQueue(
-      { name: QUEUE_NAME.MAIL_QUEUE },
-      { name: QUEUE_NAME.MESSAGE_QUEUE },
-      { name: QUEUE_NAME.SEARCH_QUEUE },
-    ),
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -106,16 +97,6 @@ import { SearchModule } from './search/search.module';
     }),
     RedisModule,
     AuthModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const jwtConfig = configService.get<IJwt>('secret');
-        return {
-          secret: jwtConfig?.secret,
-        };
-      },
-    }),
     DepartementModule,
     ChatModule,
     CoursesModule,
@@ -124,19 +105,17 @@ import { SearchModule } from './search/search.module';
     AchievementsModule,
     ScheduleModule,
     QuizModule,
+    WorkerModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    MailQueue,
-    MailQueueEventListener,
     {
       provide: 'APP_GUARD',
       useClass: HybridThrottlerGuard,
     },
-    MailService,
   ],
 })
 export class AppModule {
-  constructor(private dataSource: DataSource) {}
+  constructor() {}
 }

@@ -11,4 +11,5 @@ import { UserAchievement } from './entities/user-achievement.entity';
   providers: [AchievementsService],
   exports: [AchievementsService],
 })
-export class AchievementsModule {} 
+export class AchievementsModule {}
+
